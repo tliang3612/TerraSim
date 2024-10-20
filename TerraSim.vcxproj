@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="camera.cpp" />
     <ClCompile Include="Dependencies\libs\FastNoise\FastNoise.cpp" />
     <ClCompile Include="Dependencies\libs\glad\glad.c" />
     <ClCompile Include="Dependencies\libs\glm\detail\glm.cpp" />
@@ -156,11 +157,16 @@
     <ClCompile Include="Dependencies\libs\stb\stb_image_write.c" />
     <ClCompile Include="Dependencies\libs\tinyobjloader\tiny_obj_loader.cc" />
     <ClCompile Include="display.cpp" />
+    <ClCompile Include="heightmap.cpp" />
+    <ClCompile Include="model_factory.cpp" />
+    <ClCompile Include="renderer.cpp" />
+    <ClCompile Include="shader_handler.cpp" />
+    <ClCompile Include="terrain.cpp" />
     <ClCompile Include="TerraSim.cpp" />
-    <ClCompile Include="util\math_util.cpp" />
     <ClCompile Include="util\util.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="camera.h" />
     <ClInclude Include="Dependencies\libs\FastNoise\FastNoise.h" />
     <ClInclude Include="Dependencies\libs\glad\glad.h" />
     <ClInclude Include="Dependencies\libs\glad\khrplatform.h" />
@@ -512,8 +518,11 @@
     <ClInclude Include="Dependencies\SDL2\include\SDL_video.h" />
     <ClInclude Include="Dependencies\SDL2\include\SDL_vulkan.h" />
     <ClInclude Include="display.h" />
-    <ClInclude Include="util\math_util.h" />
-    <ClInclude Include="util\types.h" />
+    <ClInclude Include="heightmap.h" />
+    <ClInclude Include="model_factory.h" />
+    <ClInclude Include="renderer.h" />
+    <ClInclude Include="shader_handler.h" />
+    <ClInclude Include="terrain.h" />
     <ClInclude Include="util\util.h" />
   </ItemGroup>
   <ItemGroup>
@@ -651,6 +660,13 @@
     <None Include="Dependencies\libs\glm\gtx\vector_angle.inl" />
     <None Include="Dependencies\libs\glm\gtx\vector_query.inl" />
     <None Include="Dependencies\libs\glm\gtx\wrap.inl" />
+    <None Include="imgui.ini" />
+    <None Include="opengl32.dll" />
+    <None Include="README.md" />
+    <None Include="SDL2.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="LICENSE.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

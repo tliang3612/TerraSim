@@ -45,7 +45,7 @@ Display::Display(std::string display_name, int width, int height)
 	ImGui::StyleColorsClassic();
 
 	ImGui_ImplSDL2_InitForOpenGL(m_window, m_context);
-	ImGui_ImplOpenGL3_Init("#version 330");
+	ImGui_ImplOpenGL3_Init("#version 150");
 }
 
 SDL_Window* Display::GetWindow() const

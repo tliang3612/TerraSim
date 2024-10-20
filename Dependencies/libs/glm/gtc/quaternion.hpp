@@ -63,7 +63,7 @@ namespace glm
 	///
 	/// @see gtc_quaternion
 	template<typename T, qualifier Q>
-	GLM_FUNC_DECL T pitch(qua<T, Q> const& x);
+	GLM_FUNC_DECL T m_pitch(qua<T, Q> const& x);
 
 	/// Returns yaw value of euler angles expressed in radians.
 	///
