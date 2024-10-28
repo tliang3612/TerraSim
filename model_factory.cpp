@@ -60,8 +60,8 @@ void ModelFactory::CreateAndPopulateBuffer(int attributeIndex, int elementWidth,
 
 	glEnableVertexAttribArray(attributeIndex);  // Enable texture coordinate attribute
 
-	//specify how the data should be interpreted for the given attribute index.
-	glVertexAttribPointer(attributeIndex, elementWidth, GL_FLOAT, GL_FALSE, elementWidth * sizeof(float), 0); 
+	//specify how the data should be interpreted for the given attribute index. no stride needed as each data is within its own vbo
+	glVertexAttribPointer(attributeIndex, elementWidth, GL_FLOAT, GL_FALSE, 0, 0); 
 
 	//unbind the buffer
 	glBindBuffer(GL_ARRAY_BUFFER, 0);

@@ -30,7 +30,7 @@ void Renderer::PrepareImGuiFrame() {
 void Renderer::PrepareFrame(){
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
+	glCullFace(GL_FRONT);
 	//clear color and depth buffer before rendering new frame
 	glViewport(0, 0, m_width, m_height);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

@@ -7,10 +7,10 @@ const std::string FRAGMENT_SHADER = "shaders/terrain.fs";
 
 ShaderHandler::ShaderHandler() {
     LoadShaders(VERTEX_SHADER, FRAGMENT_SHADER);
-    uView = GetUniformLocation("uView");
-    uProjection = GetUniformLocation("uProjection");
     uClip = GetUniformLocation("uClip");
+    uLightDirection = GetUniformLocation("uLightDirection");
     uHeightmap = GetUniformLocation("uHeightmap");
+    uViewProjection = GetUniformLocation("uViewProjection");
     BindAttribute(0, "iPosition");
     BindAttribute(1, "iTexture");
 }
@@ -108,15 +108,16 @@ void ShaderHandler::BindAttribute(int attribute, std::string variableName) {
 	glBindAttribLocation(m_shaderProgramID, attribute, variableName.c_str());
 }
 
-void ShaderHandler::SetView(glm::mat4 view) {
-    SetUniformMatrix4(uView, view);
-}
-
-void ShaderHandler::SetProjection(glm::mat4 projection) {
-    SetUniformMatrix4(uProjection, projection);
-}
 void ShaderHandler::SetClip(glm::vec4 clip) {
 	SetUniformVec4(uClip, clip);
+}
+
+void ShaderHandler::SetLightDirection(glm::vec3 lightDirection) {
+    SetUniformVec3(uLightDirection, lightDirection);
+}
+
+void ShaderHandler::SetViewProjection(glm::mat4 viewProjection) {
+    SetUniformMatrix4(uViewProjection, viewProjection);
 }
 
 void ShaderHandler::Enable() {

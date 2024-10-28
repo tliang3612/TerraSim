@@ -1,5 +1,5 @@
 #pragma once
-#include "heightmap.h"
+#include "heightmap.hpp"
 #include "model_factory.h"
 
 class Terrain {

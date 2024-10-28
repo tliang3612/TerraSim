@@ -16,7 +16,6 @@ C:\Users\broni\source\repos\TerraSim\Dependencies\libs\stb\stb_image.c;C:\Users\
 C:\Users\broni\source\repos\TerraSim\Dependencies\libs\stb\stb_image_write.c;C:\Users\broni\source\repos\TerraSim\TerraSim\x64\Debug\stb_image_write.obj
 C:\Users\broni\source\repos\TerraSim\Dependencies\libs\tinyobjloader\tiny_obj_loader.cc;C:\Users\broni\source\repos\TerraSim\TerraSim\x64\Debug\tiny_obj_loader.obj
 C:\Users\broni\source\repos\TerraSim\display.cpp;C:\Users\broni\source\repos\TerraSim\TerraSim\x64\Debug\display.obj
-C:\Users\broni\source\repos\TerraSim\heightmap.cpp;C:\Users\broni\source\repos\TerraSim\TerraSim\x64\Debug\heightmap.obj
 C:\Users\broni\source\repos\TerraSim\model_factory.cpp;C:\Users\broni\source\repos\TerraSim\TerraSim\x64\Debug\model_factory.obj
 C:\Users\broni\source\repos\TerraSim\renderer.cpp;C:\Users\broni\source\repos\TerraSim\TerraSim\x64\Debug\renderer.obj
 C:\Users\broni\source\repos\TerraSim\shader_handler.cpp;C:\Users\broni\source\repos\TerraSim\TerraSim\x64\Debug\shader_handler.obj

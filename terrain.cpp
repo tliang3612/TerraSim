@@ -27,7 +27,7 @@ void Terrain::Destroy() {
 	m_heightmap.Destroy();
 }
 
-
+//size is used to scale the terrain, distance between each 
 Terrain TerrainFactory::GenerateTerrain(ModelFactory modelFactory, float size, int resolution)
 {
     std::vector<float> vertices;
@@ -58,22 +58,24 @@ Terrain TerrainFactory::GenerateTerrain(ModelFactory modelFactory, float size, i
     }
 
     //generate indices for quads (two triangles per quad)
-    for (int gz = 0; gz < resolution - 1; gz++) {
-        for (int gx = 0; gx < resolution - 1; gx++) {
-            int topLeft = gz * resolution + gx; 
+    for (int z = 0; z < resolution - 1; z++) {
+        for (int x = 0; x < resolution - 1; x++) {
+            int topLeft = z * resolution + x; 
             int topRight = topLeft + 1;
-            int bottomLeft = (gz + 1) * resolution + gx;
+            int bottomLeft = (z + 1) * resolution + x;
             int bottomRight = bottomLeft + 1;
 
-            //first triangle
+
+            //first triangle (topleft)
             indices.push_back(topLeft);
             indices.push_back(bottomLeft);
             indices.push_back(topRight);
 
-            //second triangle
+            //second triangle (bottom right)
             indices.push_back(topRight);
             indices.push_back(bottomLeft);
             indices.push_back(bottomRight);
+
         }
     }
 

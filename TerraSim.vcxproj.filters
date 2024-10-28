@@ -72,9 +72,6 @@
     <ClCompile Include="Dependencies\libs\tinyobjloader\tiny_obj_loader.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="heightmap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1148,7 +1145,7 @@
     <ClInclude Include="Dependencies\SDL2\include\SDL_vulkan.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="heightmap.h">
+    <ClInclude Include="heightmap.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="renderer.h">

@@ -11,15 +11,15 @@ public:
 
 	// Get the camera's view matrix.
 	glm::mat4 GetViewMatrix();
-	void SetPitch(float pitch) { m_pitch = pitch; }
-	void SetYaw(float yaw) { m_yaw = yaw; }
-	const glm::vec3 GetPosition() { return position; }
-	const glm::vec3 GetRotation() { return glm::vec3(m_pitch, m_yaw, m_roll); }
 	glm::vec3 position;
+	float pitch;
+	float yaw;
+	float roll;
+	void Update(float deltaTime, bool keyW, bool keyA, bool keyS, bool keyD, bool keyZ, bool keyX, bool keyLeftShift, float mouseDeltaX, float mouseDeltaY, int displayWidth, int displayHeight);
 
 private:
-	float m_pitch;
-	float m_yaw;
-	float m_roll;
-
+	void MoveLongitude(float deltaTime, float speed);
+    void MoveLatitude(float deltaTime, float speed);
+    void MoveVertical(float deltaTime, float speed);
+    void Rotate(float mouseDeltaX, float mouseDeltaY, int displayWidth, int displayHeight);
 }; 

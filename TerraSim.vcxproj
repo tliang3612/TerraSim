@@ -157,7 +157,6 @@
     <ClCompile Include="Dependencies\libs\stb\stb_image_write.c" />
     <ClCompile Include="Dependencies\libs\tinyobjloader\tiny_obj_loader.cc" />
     <ClCompile Include="display.cpp" />
-    <ClCompile Include="heightmap.cpp" />
     <ClCompile Include="model_factory.cpp" />
     <ClCompile Include="renderer.cpp" />
     <ClCompile Include="shader_handler.cpp" />
@@ -518,7 +517,7 @@
     <ClInclude Include="Dependencies\SDL2\include\SDL_video.h" />
     <ClInclude Include="Dependencies\SDL2\include\SDL_vulkan.h" />
     <ClInclude Include="display.h" />
-    <ClInclude Include="heightmap.h" />
+    <ClInclude Include="heightmap.hpp" />
     <ClInclude Include="model_factory.h" />
     <ClInclude Include="renderer.h" />
     <ClInclude Include="shader_handler.h" />

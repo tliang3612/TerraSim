@@ -10,7 +10,9 @@ public:
 
 	GLuint uProjection;
 	GLuint uView;
+	GLuint uViewProjection;
 	GLuint uClip;
+	GLuint uLightDirection;
 	GLuint uHeightmap;
 
 	void LoadShaders(std::string vertexShaderFile, std::string fragmentShaderFile);
@@ -28,8 +30,8 @@ public:
 	void SetUniformSampler2D(GLuint location, GLenum texture, GLuint textureID);
 	void BindAttribute(int attribute, std::string variableName);
 	void SetClip(glm::vec4 clip);
-	void SetView(glm::mat4 view);
-	void SetProjection(glm::mat4 projection);
+	void SetLightDirection(glm::vec3 lightDirection);
+	void SetViewProjection(glm::mat4 viewProjection);
 
 
 private:
