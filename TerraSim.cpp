@@ -8,7 +8,7 @@
 #include <chrono>
 #include "renderer.h"
 #include "terrain.h"
-#include "model_factory.h"
+#include "data_factory.h"
 #include "shader_handler.h"
 #include "camera.h"
 #undef main // Fixes weird SDL issue
@@ -35,11 +35,14 @@ int main()
 	glm::vec3 lightDirection(0.f, 1.f, 0.f);
 
 	ShaderHandler shaderHandler = ShaderHandler();
-	ModelFactory modelFactory = ModelFactory();
+	DataFactory dataFactory = DataFactory();
+
+	//load the texture
+	GLuint textureID = dataFactory.LoadTexture("resources/Terrain1.png");
 
 	//Terrain logic
 	TerrainFactory terrainFactory = TerrainFactory();
-	Terrain terrain = terrainFactory.GenerateTerrain(modelFactory, 500, 1000);
+	Terrain terrain = terrainFactory.GenerateTerrain(dataFactory, 500, 1000, textureID);
 
 	float deltaTime = .1f;
 	auto deltaTimeCounter = SDL_GetPerformanceCounter(); //record the deltaTime counter
@@ -243,7 +246,7 @@ int main()
 		renderer.Update();
 	}
 	shaderHandler.Destroy();
-	modelFactory.DeleteDataObjects();
+	dataFactory.DeleteDataObjects();
 	renderer.Destroy();
 
 	return 0;

@@ -8,12 +8,11 @@ class ShaderHandler {
 public:
 	ShaderHandler();
 
-	GLuint uProjection;
-	GLuint uView;
 	GLuint uViewProjection;
 	GLuint uClip;
 	GLuint uLightDirection;
 	GLuint uHeightmap;
+	GLuint uTexture;
 
 	void LoadShaders(std::string vertexShaderFile, std::string fragmentShaderFile);
 	void Enable();

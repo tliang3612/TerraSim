@@ -1,11 +1,12 @@
 #include "terrain.h"
-#include "model_factory.h"
+#include "data_factory.h"
 #include <vector>
 
-Terrain::Terrain(Model model, Heightmap heightmap)
+Terrain::Terrain(Model model, Heightmap heightmap, GLuint textureID)
 {
 	m_model = model;
 	m_heightmap = heightmap; 
+    m_textureID = textureID;
 }
 
 float Terrain::GetHeightAtPoint(float x, float y)
@@ -28,7 +29,7 @@ void Terrain::Destroy() {
 }
 
 //size is used to scale the terrain, distance between each 
-Terrain TerrainFactory::GenerateTerrain(ModelFactory modelFactory, float size, int resolution)
+Terrain TerrainFactory::GenerateTerrain(DataFactory modelFactory, float size, int resolution, GLuint textureID)
 {
     std::vector<float> vertices;
     std::vector<float> textures;
@@ -93,5 +94,5 @@ Terrain TerrainFactory::GenerateTerrain(ModelFactory modelFactory, float size, i
 
     //create model with vertex and texture data
     Model out = modelFactory.CreateModel(verticesOut.data(), texturesOut.data(), verticesOut.size() / 3);
-    return Terrain(out, Heightmap(size, resolution, modelFactory));
+    return Terrain(out, Heightmap(size, resolution, modelFactory), textureID);
 }

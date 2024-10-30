@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include <time.h>
 #include <memory>
-#include "model_factory.h"
+#include "data_factory.h"
 #include <iostream>
 struct Heightmap {
 	FastNoise noise;
@@ -18,7 +18,7 @@ struct Heightmap {
 	Heightmap() = default;
 	
 	
-	Heightmap(float size, int resolution, ModelFactory modelFactory)
+	Heightmap(float size, int resolution, DataFactory dataFactory)
 	{
 		this->heightmapSize = size;
 		this->heightmapResolution = resolution;
@@ -47,7 +47,7 @@ struct Heightmap {
 		std::cout << maxHeight << std::endl;
 
 
-		textureID = modelFactory.CreateTexture();
+		textureID = dataFactory.CreateTexture();
 		glBindTexture(GL_TEXTURE_2D, textureID); //make heightmap texture configurable
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); //prevent horizontal wrapping outside of [0,1]
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); //same but for verticale

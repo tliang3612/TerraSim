@@ -7,6 +7,8 @@ in vec3 vColor;      // Color passed from the vertex shader (grayscale from heig
 in vec3 vNormal;	// Calculated surface normal from the vertex shader
 
 uniform vec3 uLightDirection; // Light direction. changes according to user input
+uniform sampler2D uTexture;
+
 
 // Output to the framebuffer
 out vec4 oFragColor;
@@ -14,6 +16,8 @@ out vec4 oFragColor;
 void main() {
 	vec3 unitNormal = normalize(vNormal); // Must normalize for dot product math calculation things
 	vec3 brightness = clamp(dot(unitNormal, uLightDirection), 0.25f, 1.f) * vec3(1.f, 1.f, 1.f); // The more front facing the normal is to the light direction, the brighter. clamp between 0.3 and 1
-    oFragColor = vec4(brightness * vColor, 1.f);
+	vec2 coordinates = vTexture * 100.0f;
+	vec3 textureColor = texture(uTexture, coordinates).rgb;
+    oFragColor = vec4(brightness * vColor * textureColor, 1.f);
 }
 

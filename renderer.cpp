@@ -48,9 +48,9 @@ void Renderer::RenderTerrain(Terrain terrain, ShaderHandler shaderHandler)
 	glBindVertexArray(terrain.GetModel().vaoID);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
-	glBindTexture(GL_TEXTURE_2D, terrain.GetHeightmap().textureID);
 
 	shaderHandler.SetUniformSampler2D(shaderHandler.uHeightmap, GL_TEXTURE0, terrain.GetHeightmap().textureID);
+	shaderHandler.SetUniformSampler2D(shaderHandler.uTexture, GL_TEXTURE1, terrain.GetTextureID());
 
 	glDrawArrays(GL_TRIANGLES, 0, terrain.GetModel().vertexCount);
 

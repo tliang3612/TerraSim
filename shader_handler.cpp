@@ -9,8 +9,9 @@ ShaderHandler::ShaderHandler() {
     LoadShaders(VERTEX_SHADER, FRAGMENT_SHADER);
     uClip = GetUniformLocation("uClip");
     uLightDirection = GetUniformLocation("uLightDirection");
-    uHeightmap = GetUniformLocation("uHeightmap");
     uViewProjection = GetUniformLocation("uViewProjection");
+    uTexture = GetUniformLocation("uTexture");
+    uHeightmap = GetUniformLocation("uHeightmap");
     BindAttribute(0, "iPosition");
     BindAttribute(1, "iTexture");
 }
@@ -97,9 +98,18 @@ void ShaderHandler::SetUniformMatrix4(GLuint location, glm::mat4& value) {
 }
 
 void ShaderHandler::SetUniformSampler2D(GLuint location, GLenum texture, GLuint textureID) {
+
+    int textureIndex = 0;
+    switch (texture) {
+        case GL_TEXTURE0: textureIndex = 0; break;
+        case GL_TEXTURE1: textureIndex = 1; break;
+        case GL_TEXTURE2: textureIndex = 2; break;
+        default:
+            return;
+    }
 	glActiveTexture(texture); 
 	glEnable(GL_TEXTURE_2D); 
-	glUniform1i(location, 0);  
+	glUniform1i(location, textureIndex);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 }
 

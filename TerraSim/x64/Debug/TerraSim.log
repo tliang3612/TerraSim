@@ -1,8 +1,2 @@
-﻿  model_factory.cpp
-  terrain.cpp
-C:\Users\broni\source\repos\TerraSim\heightmap.hpp(28,21): warning C4244: 'argument': conversion from 'time_t' to 'int', possible loss of data
-  (compiling source file 'terrain.cpp')
-  
-C:\Users\broni\source\repos\TerraSim\terrain.cpp(95,101): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-  Generating Code...
+﻿  data_factory.cpp
   TerraSim.vcxproj -> C:\Users\broni\source\repos\TerraSim\x64\Debug\TerraSim.exe
