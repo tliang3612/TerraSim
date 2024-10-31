@@ -10,7 +10,9 @@ ShaderHandler::ShaderHandler() {
     uClip = GetUniformLocation("uClip");
     uLightDirection = GetUniformLocation("uLightDirection");
     uViewProjection = GetUniformLocation("uViewProjection");
-    uTexture = GetUniformLocation("uTexture");
+    uTexture1 = GetUniformLocation("uTexture1");
+    uTexture2 = GetUniformLocation("uTexture2");
+    uTexture3 = GetUniformLocation("uTexture3");
     uHeightmap = GetUniformLocation("uHeightmap");
     BindAttribute(0, "iPosition");
     BindAttribute(1, "iTexture");
@@ -104,6 +106,8 @@ void ShaderHandler::SetUniformSampler2D(GLuint location, GLenum texture, GLuint 
         case GL_TEXTURE0: textureIndex = 0; break;
         case GL_TEXTURE1: textureIndex = 1; break;
         case GL_TEXTURE2: textureIndex = 2; break;
+        case GL_TEXTURE3: textureIndex = 3; break;
+        case GL_TEXTURE4: textureIndex = 4; break;
         default:
             return;
     }

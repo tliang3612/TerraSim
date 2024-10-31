@@ -90,6 +90,9 @@
     <ClCompile Include="texture_handler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Dependencies\libs\tinyfiledialogs\tinyfiledialogs.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="display.h">
@@ -878,33 +881,6 @@
     <ClInclude Include="Dependencies\libs\imgui\imstb_truetype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Dependencies\libs\shaders\BloomShader.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\libs\shaders\BlurShader.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\libs\shaders\DiffuseShader.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\libs\shaders\FilterShader.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\libs\shaders\LumaShader.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\libs\shaders\QuadShader.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\libs\shaders\SkyboxShader.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\libs\shaders\TerrainShader.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\libs\shaders\WaterShader.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Dependencies\libs\stb\stb_image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1167,6 +1143,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="texture_handler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\libs\tinyfiledialogs\tinyfiledialogs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

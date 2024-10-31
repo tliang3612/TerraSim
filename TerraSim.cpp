@@ -5,7 +5,7 @@
 #include <imgui/imgui_impl_sdl2.h>
 #include <imgui/imgui_impl_opengl3.h>
 #include <glm/ext/matrix_clip_space.hpp>
-#include <chrono>
+#include <tinyfiledialogs/tinyfiledialogs.h>
 #include "renderer.h"
 #include "terrain.h"
 #include "data_factory.h"
@@ -37,12 +37,17 @@ int main()
 	ShaderHandler shaderHandler = ShaderHandler();
 	DataFactory dataFactory = DataFactory();
 
-	//load the texture
-	GLuint textureID = dataFactory.LoadTexture("resources/Terrain1.png");
+	//load the textures
+	GLuint textureID1 = dataFactory.LoadTexture("resources/Terrain1.png");
+	GLuint textureID2 = dataFactory.LoadTexture("resources/Terrain2.png");
+	GLuint textureID3 = dataFactory.LoadTexture("resources/Terrain3.png");
+	GLuint textureID4 = dataFactory.LoadTexture("resources/Terrain1.png");
+
+	std::vector<GLuint> textureIDs = { textureID1, textureID2, textureID3, textureID4 };
 
 	//Terrain logic
 	TerrainFactory terrainFactory = TerrainFactory();
-	Terrain terrain = terrainFactory.GenerateTerrain(dataFactory, 500, 1000, textureID);
+	Terrain terrain = terrainFactory.GenerateTerrain(dataFactory, 500, 1000, textureIDs);
 
 	float deltaTime = .1f;
 	auto deltaTimeCounter = SDL_GetPerformanceCounter(); //record the deltaTime counter
@@ -199,23 +204,43 @@ int main()
 			ImGui::Begin("Texture Settings"); {
 				ImGui::PushItemWidth(150);
 
-				static char* textures[4] = { nullptr, nullptr, nullptr, nullptr };
+				std::vector<GLuint> textureIDs = terrain.GetTextureIDs();
+				static GLuint textures[4] = { textureIDs[0],textureIDs[1],textureIDs[2], textureIDs[0]};
 
-				ImGui::Button("tex1", ImVec2(35.f, 35.f));
-				ImGui::SameLine();
-				ImGui::Text("Texture 1");
+				// in scope function that will handle texture selection
+				auto HandleTextureSelection = [&](int index) {
+					// Open file dialog when button is clicked
+					const char* filters[] = { "*.png", "*.jpg", "*.jpeg" };
+					const char* filePath = tinyfd_openFileDialog("Select Texture", "", 3, filters, NULL, 0);
 
-				ImGui::Button("tex2", ImVec2(35.f, 35.f));
-				ImGui::SameLine();
-				ImGui::Text("Texture 2");
+					if (filePath) {
+						// Load the new texture
+						GLuint newTextureID = dataFactory.LoadTexture(filePath); // Assumes you have a function to load textures
+						textures[index] = newTextureID;
 
-				ImGui::Button("tex3", ImVec2(35.f, 35.f));
-				ImGui::SameLine();
-				ImGui::Text("Texture 3");
+						// Update the texture in your terrain object or relevant structure
+						terrain.UpdateTexture(index, newTextureID);
+					}
+				};
 
-				ImGui::Button("tex4", ImVec2(35.f, 35.f));
-				ImGui::SameLine();
-				ImGui::Text("Texture 4");
+				for (int i = 0; i < 4; i++) {
+					if (textures[i] != 0) {
+						// imgui function that is able to take in a 
+						if (ImGui::ImageButton((void*)(intptr_t)textures[i], ImVec2(50.f, 50.f))) {
+							HandleTextureSelection(i);
+						}
+					}
+					else {
+						std::string buttonLabel = "Tex_" + std::to_string(i + 1);
+
+						if (ImGui::Button(buttonLabel.c_str(), ImVec2(50.f, 50.f))) {
+							HandleTextureSelection(i);
+						}
+					}
+
+					ImGui::SameLine();
+					ImGui::Text("Texture %d", i + 1);
+				}
 
 				ImGui::PopItemWidth();
 			}

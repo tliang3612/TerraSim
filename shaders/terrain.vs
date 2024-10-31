@@ -10,7 +10,8 @@ out vec3 vNormal;
 
 uniform vec4 uClip;
 uniform mat4 uViewProjection;
-uniform sampler2D uTexture;
+uniform float uMinHeight;
+uniform float uMaxHeight;
 uniform sampler2D uHeightmap;
 
 // Calculate the surface normal of the heightmap texture. To be used for lighting

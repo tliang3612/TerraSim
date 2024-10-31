@@ -14,6 +14,7 @@ C:\Users\broni\source\repos\TerraSim\Dependencies\libs\imgui\imgui_tables.cpp;C:
 C:\Users\broni\source\repos\TerraSim\Dependencies\libs\imgui\imgui_widgets.cpp;C:\Users\broni\source\repos\TerraSim\TerraSim\x64\Debug\imgui_widgets.obj
 C:\Users\broni\source\repos\TerraSim\Dependencies\libs\stb\stb_image.c;C:\Users\broni\source\repos\TerraSim\TerraSim\x64\Debug\stb_image.obj
 C:\Users\broni\source\repos\TerraSim\Dependencies\libs\stb\stb_image_write.c;C:\Users\broni\source\repos\TerraSim\TerraSim\x64\Debug\stb_image_write.obj
+C:\Users\broni\source\repos\TerraSim\Dependencies\libs\tinyfiledialogs\tinyfiledialogs.c;C:\Users\broni\source\repos\TerraSim\TerraSim\x64\Debug\tinyfiledialogs.obj
 C:\Users\broni\source\repos\TerraSim\Dependencies\libs\tinyobjloader\tiny_obj_loader.cc;C:\Users\broni\source\repos\TerraSim\TerraSim\x64\Debug\tiny_obj_loader.obj
 C:\Users\broni\source\repos\TerraSim\display.cpp;C:\Users\broni\source\repos\TerraSim\TerraSim\x64\Debug\display.obj
 C:\Users\broni\source\repos\TerraSim\data_factory.cpp;C:\Users\broni\source\repos\TerraSim\TerraSim\x64\Debug\data_factory.obj

@@ -12,7 +12,11 @@ public:
 	GLuint uClip;
 	GLuint uLightDirection;
 	GLuint uHeightmap;
-	GLuint uTexture;
+	GLuint uTexture1;
+	GLuint uTexture2;
+	GLuint uTexture3;
+	GLuint uTexture4;
+
 
 	void LoadShaders(std::string vertexShaderFile, std::string fragmentShaderFile);
 	void Enable();

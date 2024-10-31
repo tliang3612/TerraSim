@@ -155,6 +155,7 @@
     <ClCompile Include="Dependencies\libs\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Dependencies\libs\stb\stb_image.c" />
     <ClCompile Include="Dependencies\libs\stb\stb_image_write.c" />
+    <ClCompile Include="Dependencies\libs\tinyfiledialogs\tinyfiledialogs.c" />
     <ClCompile Include="Dependencies\libs\tinyobjloader\tiny_obj_loader.cc" />
     <ClCompile Include="display.cpp" />
     <ClCompile Include="data_factory.cpp" />
@@ -427,17 +428,9 @@
     <ClInclude Include="Dependencies\libs\imgui\imstb_textedit.h" />
     <ClInclude Include="Dependencies\libs\imgui\imstb_truetype.h" />
     <ClInclude Include="Dependencies\libs\imgui\misc\single_file\imgui_single_file.h" />
-    <ClInclude Include="Dependencies\libs\shaders\BloomShader.hpp" />
-    <ClInclude Include="Dependencies\libs\shaders\BlurShader.hpp" />
-    <ClInclude Include="Dependencies\libs\shaders\DiffuseShader.hpp" />
-    <ClInclude Include="Dependencies\libs\shaders\FilterShader.hpp" />
-    <ClInclude Include="Dependencies\libs\shaders\LumaShader.hpp" />
-    <ClInclude Include="Dependencies\libs\shaders\QuadShader.hpp" />
-    <ClInclude Include="Dependencies\libs\shaders\SkyboxShader.hpp" />
-    <ClInclude Include="Dependencies\libs\shaders\TerrainShader.hpp" />
-    <ClInclude Include="Dependencies\libs\shaders\WaterShader.hpp" />
     <ClInclude Include="Dependencies\libs\stb\stb_image.h" />
     <ClInclude Include="Dependencies\libs\stb\stb_image_write.h" />
+    <ClInclude Include="Dependencies\libs\tinyfiledialogs\tinyfiledialogs.h" />
     <ClInclude Include="Dependencies\libs\tinyobjloader\tiny_obj_loader.h" />
     <ClInclude Include="Dependencies\SDL2\include\begin_code.h" />
     <ClInclude Include="Dependencies\SDL2\include\close_code.h" />

@@ -4,14 +4,15 @@
 
 class Terrain {
 public:
-	Terrain(Model model, Heightmap heightmap, GLuint textureID);
+	Terrain(Model model, Heightmap heightmap, std::vector<GLuint> textureIDs);
 	Terrain() = default;
 
 	float GetHeightAtPoint(float x, float y);
 	void SetHeightAtPoint(float x, float y, float height);
 	void Update();
+	void UpdateTexture(int index, GLuint newTextureID);
 	void Destroy();
-	const GLuint GetTextureID() { return m_textureID; }
+	const std::vector<GLuint> GetTextureIDs() { return m_textureIDs; }
 	const Model GetModel() { return m_model; }
 	const Heightmap GetHeightmap() { return m_heightmap; }
 
@@ -20,7 +21,7 @@ public:
 private:
 	Model m_model;
 	Heightmap m_heightmap;
-	GLuint m_textureID;
+	std::vector<GLuint> m_textureIDs;
 
 };
 
@@ -28,5 +29,5 @@ class TerrainFactory {
 public:
 	TerrainFactory() = default;
 
-	Terrain GenerateTerrain(DataFactory modelFactory, float size, int resolution, GLuint texture);
+	Terrain GenerateTerrain(DataFactory modelFactory, float size, int resolution, std::vector<GLuint> textureIDs);
 };
