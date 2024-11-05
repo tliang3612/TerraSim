@@ -50,10 +50,10 @@ void Renderer::RenderTerrain(Terrain terrain, ShaderHandler shaderHandler)
 	glEnableVertexAttribArray(1);
 
 	shaderHandler.SetUniformSampler2D(shaderHandler.uHeightmap, GL_TEXTURE0, terrain.GetHeightmap().textureID);
-	shaderHandler.SetUniformSampler2D(shaderHandler.uTexture1, GL_TEXTURE1, terrain.GetTextureIDs()[0]);
-	shaderHandler.SetUniformSampler2D(shaderHandler.uTexture2, GL_TEXTURE2, terrain.GetTextureIDs()[1]);
-	shaderHandler.SetUniformSampler2D(shaderHandler.uTexture3, GL_TEXTURE3, terrain.GetTextureIDs()[2]);
-	shaderHandler.SetUniformSampler2D(shaderHandler.uTexture3, GL_TEXTURE3, terrain.GetTextureIDs()[3]);
+	shaderHandler.SetUniformSampler2D(shaderHandler.uBaseTexture, GL_TEXTURE1, terrain.GetTextureIDs()[0]);
+	shaderHandler.SetUniformSampler2D(shaderHandler.uGroundTexture, GL_TEXTURE2, terrain.GetTextureIDs()[1]);
+	shaderHandler.SetUniformSampler2D(shaderHandler.uMidGroundTexture, GL_TEXTURE3, terrain.GetTextureIDs()[2]);
+	shaderHandler.SetUniformSampler2D(shaderHandler.uPeaksTexture, GL_TEXTURE4, terrain.GetTextureIDs()[3]);
 
 	glDrawArrays(GL_TRIANGLES, 0, terrain.GetModel().vertexCount);
 

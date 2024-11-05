@@ -38,10 +38,10 @@ int main()
 	DataFactory dataFactory = DataFactory();
 
 	//load the textures
-	GLuint textureID1 = dataFactory.LoadTexture("resources/Terrain1.png");
-	GLuint textureID2 = dataFactory.LoadTexture("resources/Terrain2.png");
-	GLuint textureID3 = dataFactory.LoadTexture("resources/Terrain3.png");
-	GLuint textureID4 = dataFactory.LoadTexture("resources/Terrain1.png");
+	GLuint textureID1 = dataFactory.LoadTexture("resources/Base.png");
+	GLuint textureID2 = dataFactory.LoadTexture("resources/Ground.png");
+	GLuint textureID3 = dataFactory.LoadTexture("resources/MidGround.png");
+	GLuint textureID4 = dataFactory.LoadTexture("resources/Peaks.png");
 
 	std::vector<GLuint> textureIDs = { textureID1, textureID2, textureID3, textureID4 };
 
@@ -125,6 +125,8 @@ int main()
 		{
 			glm::vec4 clip = glm::vec4(0.0f); //no clipping as of now. might change for shadows
 			shaderHandler.Enable();
+			shaderHandler.SetMinHeight(terrain.GetMinHeight());
+			shaderHandler.SetMaxHeight(terrain.GetMaxHeight());
 			shaderHandler.SetViewProjection(renderer.GetProjectionMatrix() * camera.GetViewMatrix());
 			shaderHandler.SetLightDirection(lightDirection);
 			shaderHandler.SetClip(clip);
@@ -205,7 +207,8 @@ int main()
 				ImGui::PushItemWidth(150);
 
 				std::vector<GLuint> textureIDs = terrain.GetTextureIDs();
-				static GLuint textures[4] = { textureIDs[0],textureIDs[1],textureIDs[2], textureIDs[0]};
+				static GLuint textures[4] = { textureIDs[0],textureIDs[1],textureIDs[2], textureIDs[3]};
+				const std::string textureNames[4] = { "Base Texture", "Ground Texture", "Mid-Ground Texture", "Peaks Texture" };
 
 				// in scope function that will handle texture selection
 				auto HandleTextureSelection = [&](int index) {
@@ -239,7 +242,7 @@ int main()
 					}
 
 					ImGui::SameLine();
-					ImGui::Text("Texture %d", i + 1);
+					ImGui::Text(textureNames[i].c_str());
 				}
 
 				ImGui::PopItemWidth();

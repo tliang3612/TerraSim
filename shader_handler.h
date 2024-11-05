@@ -12,10 +12,12 @@ public:
 	GLuint uClip;
 	GLuint uLightDirection;
 	GLuint uHeightmap;
-	GLuint uTexture1;
-	GLuint uTexture2;
-	GLuint uTexture3;
-	GLuint uTexture4;
+	GLuint uMinHeight;
+	GLuint uMaxHeight;
+	GLuint uBaseTexture;
+	GLuint uGroundTexture;
+	GLuint uMidGroundTexture;
+	GLuint uPeaksTexture;
 
 
 	void LoadShaders(std::string vertexShaderFile, std::string fragmentShaderFile);
@@ -35,6 +37,8 @@ public:
 	void SetClip(glm::vec4 clip);
 	void SetLightDirection(glm::vec3 lightDirection);
 	void SetViewProjection(glm::mat4 viewProjection);
+	void SetMinHeight(float minHeight);
+	void SetMaxHeight(float maxHeight);
 
 
 private:

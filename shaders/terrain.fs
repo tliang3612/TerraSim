@@ -9,32 +9,37 @@ in vec3 vNormal;	// Calculated surface normal from the vertex shader
 uniform vec3 uLightDirection; // Light direction. changes according to user input
 uniform float uMinHeight;
 uniform float uMaxHeight;
-uniform sampler2D uTexture1;
-uniform sampler2D uTexture2;
-uniform sampler2D uTexture3;
-uniform sampler2D uTexture4;
+uniform sampler2D uBaseTexture;
+uniform sampler2D uGroundTexture;
+uniform sampler2D uMidGroundTexture;
+uniform sampler2D uPeaksTexture;
 
 
 // Output to the framebuffer
 out vec4 oFragColor;
 
+// Blend all textures together. some textures will be more prominent than others in certain heights
 vec3 BlendTextures(vec2 coordinates){
-    // base texture 
-    vec3 baseColor = texture(uTexture2, coordinates).rgb;
+    float normalizedHeight = clamp((vPosition.y - uMinHeight) / (uMaxHeight - uMinHeight), 0.0f, 1.0f);
 
-    // blend between texture1 and texture2 based on height
-    baseColor = mix(baseColor, texture(uTexture1, coordinates).rgb, clamp(vPosition.y / 10.0f, 0.0f, 1.0f));
+    vec3 baseColor = texture(uBaseTexture, coordinates).rgb;
+    vec3 groundColor = texture(uGroundTexture, coordinates).rgb;
+    vec3 midGroundColor = texture(uMidGroundTexture, coordinates).rgb;
+    vec3 peaksColor = texture(uPeaksTexture, coordinates).rgb;
 
-    // blend texture3 based on slope
-    vec3 upVector = vec3(0.0f, 1.0f, 0.0f);
-    float slopeFactor = max(0.0f, sqrt(1.0f - dot(normalize(vNormal), upVector)));
-    baseColor = mix(baseColor, texture(uTexture3, coordinates).rgb, slopeFactor);
+    // blend ground with base
+    float groundFactor = smoothstep(0.0f, 0.3f, normalizedHeight);
+    vec3 currentColor = mix(baseColor, groundColor, groundFactor);
 
-    // blend texture4 for peaks (based on height, stronger at high elevations)
-    float peakFactor = smoothstep(55.0f, 60.0f, vPosition.y); // harded peakFactor for now
-    baseColor = mix(baseColor, texture(uTexture4, coordinates).rgb, peakFactor);
+    // blend currentColor with midGround
+    float midGroundFactor = smoothstep(0.3f, 0.7f, normalizedHeight);
+    currentColor = mix(currentColor, midGroundColor, midGroundFactor);
 
-    return baseColor;
+    // blend current color with peaks
+    float peaksFactor = smoothstep(0.7f, 1.0f, normalizedHeight); 
+    currentColor = mix(currentColor, peaksColor, peaksFactor);
+
+    return currentColor;
 }
 
 void main() {

@@ -9,11 +9,14 @@
 struct Heightmap {
 	FastNoise noise;
 	GLuint textureID;
+	int heightmapResolution;
 	float* map;
 	float heightmapSize;
-	int heightmapResolution;
+	float maxHeight = 0;
+	float minHeight = 1;
 	float scale = 0.2f;
 	float amplitude = 80.0f;
+
 
 	Heightmap() = default;
 	
@@ -27,8 +30,6 @@ struct Heightmap {
 		noise.SetFractalOctaves(6);
 		noise.SetSeed(time(NULL));
 
-		float minHeight = 0;
-		float maxHeight = 1;
 		//Init heightmap with noise values
 		for (int i = 0; i < heightmapResolution; i++) {
 			for (int j = 0; j < heightmapResolution; j++) {
@@ -43,9 +44,6 @@ struct Heightmap {
 				}
 			}
 		}
-		std::cout << minHeight << std::endl;
-		std::cout << maxHeight << std::endl;
-
 
 		textureID = dataFactory.CreateTexture();
 		glBindTexture(GL_TEXTURE_2D, textureID); //make heightmap texture configurable

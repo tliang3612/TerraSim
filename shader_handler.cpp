@@ -10,9 +10,12 @@ ShaderHandler::ShaderHandler() {
     uClip = GetUniformLocation("uClip");
     uLightDirection = GetUniformLocation("uLightDirection");
     uViewProjection = GetUniformLocation("uViewProjection");
-    uTexture1 = GetUniformLocation("uTexture1");
-    uTexture2 = GetUniformLocation("uTexture2");
-    uTexture3 = GetUniformLocation("uTexture3");
+    uMinHeight = GetUniformLocation("uMinHeight");
+    uMaxHeight = GetUniformLocation("uMaxHeight");
+    uBaseTexture = GetUniformLocation("uBaseTexture");
+    uGroundTexture = GetUniformLocation("uGroundTexture");
+    uMidGroundTexture = GetUniformLocation("uMidGroundTexture");
+    uPeaksTexture = GetUniformLocation("uPeaksTexture");
     uHeightmap = GetUniformLocation("uHeightmap");
     BindAttribute(0, "iPosition");
     BindAttribute(1, "iTexture");
@@ -132,6 +135,14 @@ void ShaderHandler::SetLightDirection(glm::vec3 lightDirection) {
 
 void ShaderHandler::SetViewProjection(glm::mat4 viewProjection) {
     SetUniformMatrix4(uViewProjection, viewProjection);
+}
+
+void ShaderHandler::SetMinHeight(float minHeight){
+    SetUniformFloat(uMinHeight, minHeight);
+}
+
+void ShaderHandler::SetMaxHeight(float maxHeight){
+    SetUniformFloat(uMaxHeight, maxHeight);
 }
 
 void ShaderHandler::Enable() {

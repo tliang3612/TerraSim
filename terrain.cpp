@@ -9,18 +9,12 @@ Terrain::Terrain(Model model, Heightmap heightmap, std::vector<GLuint> textureID
 	m_heightmap = heightmap; 
 }
 
-float Terrain::GetHeightAtPoint(float x, float y)
-{
-	return 0.0f;
-}
 
-void Terrain::SetHeightAtPoint(float x, float y, float height)
-{
+void Terrain::SetHeightAtPoint(float x, float y, float height){
 
 }
 
-void Terrain::Update()
-{
+void Terrain::Update(){
 	m_heightmap.Update();
 }
 

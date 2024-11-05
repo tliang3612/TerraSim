@@ -1553,8 +1553,8 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="imgui.ini" />
-    <None Include="opengl32.dll" />
     <None Include="README.md" />
+    <None Include="opengl32.dll" />
     <None Include="SDL2.dll" />
   </ItemGroup>
   <ItemGroup>
