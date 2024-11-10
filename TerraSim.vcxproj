@@ -514,6 +514,7 @@
     <ClInclude Include="heightmap.hpp" />
     <ClInclude Include="data_factory.h" />
     <ClInclude Include="renderer.h" />
+    <ClInclude Include="sculptor.hpp" />
     <ClInclude Include="shader_handler.h" />
     <ClInclude Include="terrain.h" />
     <ClInclude Include="texture_handler.h" />

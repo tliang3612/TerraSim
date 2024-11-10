@@ -1148,6 +1148,9 @@
     <ClInclude Include="Dependencies\libs\tinyfiledialogs\tinyfiledialogs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="sculptor.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Dependencies\libs\glm\detail\func_common.inl">

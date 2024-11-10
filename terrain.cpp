@@ -14,6 +14,22 @@ void Terrain::SetHeightAtPoint(float x, float y, float height){
 
 }
 
+const float Terrain::GetHeightFromWorld(int pointX, int pointZ){
+    // terrain coords go from -heightmapSize/2 to +heightmapSize/2. normalize to [0,1]
+    float normalizedX = (pointX / m_heightmap.heightmapSize + 1.0f) * 0.5f; //[0, 1]
+    float normalizedZ = (pointZ / m_heightmap.heightmapSize + 1.0f) * 0.5f;
+
+    int gridX = int(normalizedX * m_heightmap.heightmapResolution);
+    int gridZ = int(normalizedZ * m_heightmap.heightmapResolution);
+
+    if (gridX < 0 || gridX >= m_heightmap.heightmapResolution ||
+        gridZ < 0 || gridZ >= m_heightmap.heightmapResolution) {
+        return 0.0f; 
+    }
+
+    return m_heightmap.map[gridZ * m_heightmap.heightmapResolution + gridX];
+}
+
 void Terrain::Update(){
 	m_heightmap.Update();
 }

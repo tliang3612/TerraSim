@@ -28,8 +28,21 @@ struct Heightmap {
 		map = new float[heightmapResolution * heightmapResolution]; //using raw pointer for map for simplicity
 		noise.SetNoiseType(FastNoise::SimplexFractal);
 		noise.SetFractalOctaves(6);
-		noise.SetSeed(time(NULL));
 
+		GenerateHeightsUsingNoise();
+
+		textureID = dataFactory.CreateTexture();
+		glBindTexture(GL_TEXTURE_2D, textureID); //make heightmap texture configurable
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); //prevent horizontal wrapping outside of [0,1]
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); //same but for verticale
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);//lineearly interpolate texture values between neighbor textures to look smoother
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // same but for larger sample size                                      
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, heightmapResolution, heightmapResolution, 0, GL_RED, GL_FLOAT, map); //upload texture data to gpu
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+	void GenerateHeightsUsingNoise() {
+		noise.SetSeed(time(NULL));
 		//Init heightmap with noise values
 		for (int i = 0; i < heightmapResolution; i++) {
 			for (int j = 0; j < heightmapResolution; j++) {
@@ -44,15 +57,6 @@ struct Heightmap {
 				}
 			}
 		}
-
-		textureID = dataFactory.CreateTexture();
-		glBindTexture(GL_TEXTURE_2D, textureID); //make heightmap texture configurable
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); //prevent horizontal wrapping outside of [0,1]
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); //same but for verticale
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);//lineearly interpolate texture values between neighbor textures to look smoother
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // same but for larger sample size                                      
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, heightmapResolution, heightmapResolution, 0, GL_RED, GL_FLOAT, map); //upload texture data to gpu
-		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	float SampleNoise(float x, float y)
@@ -67,7 +71,6 @@ struct Heightmap {
 
 	void Update()
 	{
-		//TODO
 		glBindTexture(GL_TEXTURE_2D, textureID);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, heightmapResolution, heightmapResolution, 0, GL_RED, GL_FLOAT, map);
 		glBindTexture(GL_TEXTURE_2D, 0);

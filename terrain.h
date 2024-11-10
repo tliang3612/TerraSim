@@ -11,12 +11,13 @@ public:
 	void Update();
 	void UpdateTexture(int index, GLuint newTextureID);
 	void Destroy();
-	const float GetHeight(int x, int z) { return m_heightmap.map[z + m_heightmap.heightmapResolution + x]; }
+	void AddHeight(float u, float v, float radius, float height);
+	const float GetHeightFromWorld(int x, int z);
 	const float GetMinHeight() { return m_heightmap.minHeight; }
 	const float GetMaxHeight() { return m_heightmap.maxHeight; }
 	const std::vector<GLuint> GetTextureIDs() { return m_textureIDs; }
 	const Model GetModel() { return m_model; }
-	const Heightmap GetHeightmap() { return m_heightmap; }
+	Heightmap& GetHeightmap() { return m_heightmap; }
 
 
 

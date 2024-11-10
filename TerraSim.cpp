@@ -11,6 +11,7 @@
 #include "data_factory.h"
 #include "shader_handler.h"
 #include "camera.h"
+#include "sculptor.hpp"
 #undef main // Fixes weird SDL issue
 
 
@@ -30,6 +31,8 @@ int main()
 	bool keyLeftShift = false, keyRightShift = false;
 	float mouseDragX = 0.f, mouseDragY = displayHeight;
 	int mouseX = 0.f, mouseY = 0.f;
+	bool mouseLeft = false, mouseRight = false;
+	float sculptRadius = 100.f;
 
 	//lightDirection vector
 	glm::vec3 lightDirection(0.f, 1.f, 0.f);
@@ -83,6 +86,25 @@ int main()
 				if (key == SDLK_x) keyX = keyDown;
 				if (key == SDLK_LSHIFT) keyLeftShift = keyDown;
 			}
+			else if (e.type == SDL_MOUSEBUTTONDOWN) {
+				auto button = e.button.button;
+				if (button == SDL_BUTTON_LEFT) mouseLeft = true;
+				else if (button == SDL_BUTTON_RIGHT) mouseRight = true;
+			}
+			else if (e.type == SDL_MOUSEBUTTONUP) {
+				auto button = e.button.button;
+				if (button == SDL_BUTTON_LEFT) mouseLeft = false;
+				else if (button == SDL_BUTTON_RIGHT) mouseRight = false;
+			}
+			else if (e.type == SDL_MOUSEWHEEL) {
+				float incrementVal = 1.f;
+				if (e.wheel.y > 0) {
+					sculptRadius += incrementVal;
+				}
+				else if (e.wheel.y < 0) {
+					sculptRadius -= incrementVal;
+				}
+			}
 			else if (e.type == SDL_MOUSEMOTION) {
 				mouseX = e.motion.x;
 				mouseY = e.motion.y;
@@ -121,13 +143,16 @@ int main()
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+		glm::mat4 projectionMatrix = renderer.GetProjectionMatrix();
+		glm::mat4 viewMatrix = camera.GetViewMatrix();
+
 		//Terrain Render Logic
 		{
 			glm::vec4 clip = glm::vec4(0.0f); //no clipping as of now. might change for shadows
 			shaderHandler.Enable();
 			shaderHandler.SetMinHeight(terrain.GetMinHeight());
 			shaderHandler.SetMaxHeight(terrain.GetMaxHeight());
-			shaderHandler.SetViewProjection(renderer.GetProjectionMatrix() * camera.GetViewMatrix());
+			shaderHandler.SetViewProjection(projectionMatrix * viewMatrix);
 			shaderHandler.SetLightDirection(lightDirection);
 			shaderHandler.SetClip(clip);
 
@@ -171,7 +196,11 @@ int main()
 				static float amplitude = 0.1f;
 				ImGui::SliderFloat("Amplitude", &amplitude, 0.0f, 1.0f);
 
-				ImGui::Button("Generate Terrain");
+				if(ImGui::Button("Generate Terrain")){
+					Heightmap map = terrain.GetHeightmap();
+					map.GenerateHeightsUsingNoise();
+					map.Update();
+				}
 
 				ImGui::PopItemWidth();
 			}
@@ -181,14 +210,58 @@ int main()
 				ImGui::PushItemWidth(150);
 
 				static const char* brushTypes[] = {
-					"Sculpt",
-					"Average"
+					"Step",
+					"Linear Smoothstep",
+					"Polynomial",
+					"Logarithmic",
+					"Exponential"
 				};
 				static int brushType = 0;
 				ImGui::Combo("Brush Type", &brushType, brushTypes, sizeof(brushTypes) / sizeof(brushTypes[0]));
 
 				static float strength = 0.5f;
 				ImGui::SliderFloat("Strength", &strength, 0.0f, 1.0f);
+
+				float ndcX = (2.0f * mouseX) / displayWidth - 1.0f;
+				float ndcY = 1.0f - (2.0f * mouseY) / displayHeight;
+
+				glm::vec4 clipSpaceCoords(ndcX, ndcY, -1.0f, 1.0f);
+				glm::mat4 inverseProjection = glm::inverse(projectionMatrix);
+				glm::vec4 viewSpaceCoords = inverseProjection * clipSpaceCoords; //unproject the screen space coordinates to get view space
+				viewSpaceCoords.z = -1.0f;
+				viewSpaceCoords.w = 0.0f;
+
+				glm::mat4 inverseView = glm::inverse(viewMatrix);
+				glm::vec4 worldCoords = inverseView * viewSpaceCoords;
+				glm::vec3 rayDirection = glm::normalize(glm::vec3(worldCoords)); //go from view space to world space to get mouse ray direction'
+
+				int maxSteps = 2000;             
+				float epsilon = 0.001f;      
+
+				// cast a ray from camera to first object. using ray marching algorithm
+				glm::vec3 currentPosition = camera.position;
+				glm::vec3 intersectionPoint = glm::vec3(std::numeric_limits<float>::max());
+				for (int i = 0; i < maxSteps; i++) {
+
+					float distanceToTerrain = currentPosition.y - terrain.GetHeightFromWorld(currentPosition.x, currentPosition.z);
+
+					// march ray
+					currentPosition += rayDirection * distanceToTerrain;
+
+					// if the ray is close enough to the terrain, intersection is found, exit the loop
+					if (distanceToTerrain < epsilon) {
+						intersectionPoint = currentPosition;
+						break;
+					}
+				}
+				if (intersectionPoint.y != std::numeric_limits<float>::max()) {
+					if (!ImGui::GetIO().WantCaptureMouse) {
+						if (mouseLeft) {
+							Sculptor::Sculpt(terrain.GetHeightmap(), intersectionPoint.x, intersectionPoint.z, sculptRadius, strength/2.f, brushType);
+							terrain.Update();
+						}
+					}
+				}
 
 				ImGui::PopItemWidth();
 			}
