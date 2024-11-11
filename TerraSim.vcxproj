@@ -71,8 +71,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\broni\source\repos\TerraSim\Dependencies\SDL2\include;C:\Users\broni\source\repos\TerraSim\Dependencies\libs;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\broni\source\repos\TerraSim\Dependencies\SDL2\lib;C:\Users\broni\source\repos\TerraSim\Dependencies\libs;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)\Dependencies\libs;$(ProjectDir)\Dependencies\SDL2\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)\Dependencies\SDL2\lib;$(ProjectDir)\Dependencies\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>C:\Users\broni\source\repos\TerraSim\Dependencies\SDL2\include;C:\Users\broni\source\repos\TerraSim\Dependencies\libs;$(IncludePath)</IncludePath>
@@ -116,7 +116,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\broni\source\repos\TerraSim\Dependencies\SDL2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)\Dependencies\SDL2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>user32.lib;shell32.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -155,6 +155,7 @@
     <ClCompile Include="Dependencies\libs\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Dependencies\libs\stb\stb_image.c" />
     <ClCompile Include="Dependencies\libs\stb\stb_image_write.c" />
+    <ClCompile Include="Dependencies\libs\tinyfiledialogs\more_dialogs\tinyfd_moredialogs.c" />
     <ClCompile Include="Dependencies\libs\tinyfiledialogs\tinyfiledialogs.c" />
     <ClCompile Include="Dependencies\libs\tinyobjloader\tiny_obj_loader.cc" />
     <ClCompile Include="display.cpp" />
@@ -430,6 +431,7 @@
     <ClInclude Include="Dependencies\libs\imgui\misc\single_file\imgui_single_file.h" />
     <ClInclude Include="Dependencies\libs\stb\stb_image.h" />
     <ClInclude Include="Dependencies\libs\stb\stb_image_write.h" />
+    <ClInclude Include="Dependencies\libs\tinyfiledialogs\more_dialogs\tinyfd_moredialogs.h" />
     <ClInclude Include="Dependencies\libs\tinyfiledialogs\tinyfiledialogs.h" />
     <ClInclude Include="Dependencies\libs\tinyobjloader\tiny_obj_loader.h" />
     <ClInclude Include="Dependencies\SDL2\include\begin_code.h" />
@@ -442,6 +444,19 @@
     <ClInclude Include="Dependencies\SDL2\include\SDL_blendmode.h" />
     <ClInclude Include="Dependencies\SDL2\include\SDL_clipboard.h" />
     <ClInclude Include="Dependencies\SDL2\include\SDL_config.h" />
+    <ClInclude Include="Dependencies\SDL2\include\SDL_config_android.h" />
+    <ClInclude Include="Dependencies\SDL2\include\SDL_config_emscripten.h" />
+    <ClInclude Include="Dependencies\SDL2\include\SDL_config_iphoneos.h" />
+    <ClInclude Include="Dependencies\SDL2\include\SDL_config_macosx.h" />
+    <ClInclude Include="Dependencies\SDL2\include\SDL_config_minimal.h" />
+    <ClInclude Include="Dependencies\SDL2\include\SDL_config_ngage.h" />
+    <ClInclude Include="Dependencies\SDL2\include\SDL_config_os2.h" />
+    <ClInclude Include="Dependencies\SDL2\include\SDL_config_pandora.h" />
+    <ClInclude Include="Dependencies\SDL2\include\SDL_config_windows.h" />
+    <ClInclude Include="Dependencies\SDL2\include\SDL_config_wingdk.h" />
+    <ClInclude Include="Dependencies\SDL2\include\SDL_config_winrt.h" />
+    <ClInclude Include="Dependencies\SDL2\include\SDL_config_xbox.h" />
+    <ClInclude Include="Dependencies\SDL2\include\SDL_copying.h" />
     <ClInclude Include="Dependencies\SDL2\include\SDL_cpuinfo.h" />
     <ClInclude Include="Dependencies\SDL2\include\SDL_egl.h" />
     <ClInclude Include="Dependencies\SDL2\include\SDL_endian.h" />
@@ -656,9 +671,7 @@
     <None Include="Dependencies\libs\glm\gtx\vector_query.inl" />
     <None Include="Dependencies\libs\glm\gtx\wrap.inl" />
     <None Include="imgui.ini" />
-    <None Include="opengl32.dll" />
     <None Include="README.md" />
-    <None Include="SDL2.dll" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="LICENSE.txt" />

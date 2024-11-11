@@ -1,5 +1,4 @@
 #include "util/util.h"
-
 #include "shader_handler.h"
 
 const std::string VERTEX_SHADER = "shaders/terrain.vs";
