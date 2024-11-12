@@ -528,6 +528,7 @@
     <ClInclude Include="display.h" />
     <ClInclude Include="heightmap.hpp" />
     <ClInclude Include="data_factory.h" />
+    <ClInclude Include="raycaster.hpp" />
     <ClInclude Include="renderer.h" />
     <ClInclude Include="sculptor.hpp" />
     <ClInclude Include="shader_handler.h" />

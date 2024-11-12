@@ -57,7 +57,7 @@ void main() {
     vec3 textureColor = BlendTextures(texScale);
     oFragColor = vec4(brightness * textureColor, 1.f);
     float distanceFromEdge = abs(length(vPosition.xz - uIndicatorPosition) - uIndicatorRadius);
-    if (distanceFromEdge <= 5.f){
+    if (distanceFromEdge <= 5.f && uIndicatorRadius > 0.f){
         float intensity = smoothstep(5.f, 0.f, distanceFromEdge)*2.2f + 1.f; // Smooth transition for indicator ring to make it not look flat
         oFragColor *= intensity;
     }
