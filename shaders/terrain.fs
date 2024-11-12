@@ -9,6 +9,8 @@ in vec3 vNormal;	// Calculated surface normal from the vertex shader
 uniform vec3 uLightDirection; // Light direction. changes according to user input
 uniform float uMinHeight;
 uniform float uMaxHeight;
+uniform vec2 uIndicatorPosition;
+uniform float uIndicatorRadius;
 uniform sampler2D uBaseTexture;
 uniform sampler2D uGroundTexture;
 uniform sampler2D uMidGroundTexture;
@@ -54,5 +56,10 @@ void main() {
 	vec2 texScale = vTexture * 200.0f;
     vec3 textureColor = BlendTextures(texScale);
     oFragColor = vec4(brightness * textureColor, 1.f);
+    float distanceFromEdge = abs(length(vPosition.xz - uIndicatorPosition) - uIndicatorRadius);
+    if (distanceFromEdge <= 5.f){
+        float intensity = smoothstep(5.f, 0.f, distanceFromEdge)*2.2f + 1.f; // Smooth transition for indicator ring to make it not look flat
+        oFragColor *= intensity;
+    }
 }
 

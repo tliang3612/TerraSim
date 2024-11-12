@@ -14,6 +14,8 @@ public:
 	GLuint uHeightmap;
 	GLuint uMinHeight;
 	GLuint uMaxHeight;
+	GLuint uIndicatorPosition;
+	GLuint uIndicatorRadius;
 	GLuint uBaseTexture;
 	GLuint uGroundTexture;
 	GLuint uMidGroundTexture;
@@ -39,6 +41,8 @@ public:
 	void SetViewProjection(glm::mat4 viewProjection);
 	void SetMinHeight(float minHeight);
 	void SetMaxHeight(float maxHeight);
+	void SetIndicatorPosition(glm::vec2 indicatorPosition);
+	void SetIndicatorRadius(float indicatorRadius);
 
 
 private:

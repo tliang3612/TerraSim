@@ -40,16 +40,16 @@ struct Sculptor {
                     intensity = Step(distance, radius, minRadius);
                 }
                 if (brushType == 1) {
-                    intensity = LinearSmoothstep(distance, radius, minRadius);
+                    intensity = LinearFalloff(distance, radius, minRadius);
                 }
                 if (brushType == 2) {
-                    intensity = Polynomial(distance, radius, minRadius);
+                    intensity = LinearSmoothstep(distance, radius, minRadius);
                 }
                 if (brushType == 3) {
-                    intensity = Logarithmic(distance, radius, minRadius);
+                    intensity = Polynomial(distance, radius, minRadius);
                 }
                 if (brushType == 4) {
-                    intensity = Exponential(distance, radius, minRadius);
+                    intensity = Logarithmic(distance, radius, minRadius);
                 }
 
                 heightmap.map[z * heightmap.heightmapResolution + x] += strength * intensity;
@@ -64,8 +64,13 @@ struct Sculptor {
     }
 
     static float Step(float distance, float maxRadius, float minRadius) {
-        return (distance <= minRadius) ? 1.f : 0;
+        return (distance <= maxRadius) ? 1.f : 0;
     }
+
+    static float LinearFalloff(float distance, float maxRadius, float minRadius) {
+        return glm::clamp(1.f - (distance - minRadius) / (maxRadius - minRadius), 0.f, 1.0f);
+    }
+
     static float LinearSmoothstep(float distance, float maxRadius, float minRadius) {
         // as distance gets closer to maxRadius, the weaker the intensity
         float linear = glm::clamp(1.f - (distance - minRadius) / (maxRadius - minRadius), 0.f, 1.0f);
@@ -74,17 +79,11 @@ struct Sculptor {
 
     static float Polynomial(float distance, float maxRadius, float minRadius) {
         float linear = glm::clamp(1.f - (distance - minRadius) / (maxRadius - minRadius), 0.f, 1.0f);
-        return glm::pow(linear, 2.f); //sharper near center
+        return glm::pow(linear, 2.5f); //sharper near center
     }
 
     static float Logarithmic(float distance, float maxRadius, float minRadius) {
         float linear = glm::clamp(1.f - (distance - minRadius) / (maxRadius - minRadius), 0.f, 1.0f);
         return glm::log(1.0f + linear * 9.f) / glm::log(10.0f); //gradual effect 
     }
-
-    static float Exponential(float distance, float maxRadius, float minRadius) {
-        float linear = glm::clamp(1.f - (distance - minRadius) / (maxRadius - minRadius), 0.f, 1.0f);
-        return glm::exp(linear * -1.5f); //ridge effect near maxRadius
-    }
-
 };

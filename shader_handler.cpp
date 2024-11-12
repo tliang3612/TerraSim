@@ -11,6 +11,8 @@ ShaderHandler::ShaderHandler() {
     uViewProjection = GetUniformLocation("uViewProjection");
     uMinHeight = GetUniformLocation("uMinHeight");
     uMaxHeight = GetUniformLocation("uMaxHeight");
+    uIndicatorPosition = GetUniformLocation("uIndicatorPosition");
+    uIndicatorRadius = GetUniformLocation("uIndicatorRadius");
     uBaseTexture = GetUniformLocation("uBaseTexture");
     uGroundTexture = GetUniformLocation("uGroundTexture");
     uMidGroundTexture = GetUniformLocation("uMidGroundTexture");
@@ -142,6 +144,14 @@ void ShaderHandler::SetMinHeight(float minHeight){
 
 void ShaderHandler::SetMaxHeight(float maxHeight){
     SetUniformFloat(uMaxHeight, maxHeight);
+}
+
+void ShaderHandler::SetIndicatorPosition(glm::vec2 indicatorPosition) {
+    SetUniformVec2(uIndicatorPosition, indicatorPosition);
+}
+
+void ShaderHandler::SetIndicatorRadius(float indicatorRadius) {
+    SetUniformFloat(uIndicatorRadius, indicatorRadius);
 }
 
 void ShaderHandler::Enable() {

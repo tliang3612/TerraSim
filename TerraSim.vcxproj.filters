@@ -1602,6 +1602,8 @@
     </None>
     <None Include="imgui.ini" />
     <None Include="README.md" />
+    <None Include="SDL2.dll" />
+    <None Include="opengl32.dll" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="LICENSE.txt" />

@@ -97,7 +97,7 @@ int main()
 				else if (button == SDL_BUTTON_RIGHT) mouseRight = false;
 			}
 			else if (e.type == SDL_MOUSEWHEEL) {
-				float incrementVal = 1.f;
+				float incrementVal = 1.5f;
 				if (e.wheel.y > 0) {
 					sculptRadius += incrementVal;
 				}
@@ -211,10 +211,10 @@ int main()
 
 				static const char* brushTypes[] = {
 					"Step",
+					"LinearFalloff",
 					"Linear Smoothstep",
 					"Polynomial",
-					"Logarithmic",
-					"Exponential"
+					"Logarithmic"
 				};
 				static int brushType = 0;
 				ImGui::Combo("Brush Type", &brushType, brushTypes, sizeof(brushTypes) / sizeof(brushTypes[0]));
@@ -256,6 +256,11 @@ int main()
 				}
 				if (intersectionPoint.y != std::numeric_limits<float>::max()) {
 					if (!ImGui::GetIO().WantCaptureMouse) {
+						shaderHandler.Enable();
+						shaderHandler.SetIndicatorPosition(glm::vec2(intersectionPoint.x, intersectionPoint.z));
+						shaderHandler.SetIndicatorRadius(sculptRadius);
+						shaderHandler.Disable();
+
 						if (mouseLeft) {
 							Sculptor::Sculpt(terrain.GetHeightmap(), intersectionPoint.x, intersectionPoint.z, sculptRadius, strength/2.f, brushType);
 							terrain.Update();

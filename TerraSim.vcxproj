@@ -671,7 +671,9 @@
     <None Include="Dependencies\libs\glm\gtx\vector_query.inl" />
     <None Include="Dependencies\libs\glm\gtx\wrap.inl" />
     <None Include="imgui.ini" />
+    <None Include="opengl32.dll" />
     <None Include="README.md" />
+    <None Include="SDL2.dll" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="LICENSE.txt" />
