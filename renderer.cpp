@@ -4,7 +4,7 @@
 #include <imgui/imgui_impl_sdl2.h>
 #include <glad/glad.h>
 #include "terrain.h"
-#include "shader_handler.h"
+#include "shader_handlers/terrain_shader_handler.h"
 
 
 Renderer::Renderer(std::string title, int width, int height)
@@ -43,17 +43,18 @@ void Renderer::RenderImGuiFrame() {
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-void Renderer::RenderTerrain(Terrain terrain, ShaderHandler shaderHandler)
+void Renderer::RenderTerrain(Terrain terrain, TerrainShaderHandler terrainShaderHandler, Shadowmap shadowmap)
 {
 	glBindVertexArray(terrain.GetModel().vaoID);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 
-	shaderHandler.SetUniformSampler2D(shaderHandler.uHeightmap, GL_TEXTURE0, terrain.GetHeightmap().textureID);
-	shaderHandler.SetUniformSampler2D(shaderHandler.uBaseTexture, GL_TEXTURE1, terrain.GetTextureIDs()[0]);
-	shaderHandler.SetUniformSampler2D(shaderHandler.uGroundTexture, GL_TEXTURE2, terrain.GetTextureIDs()[1]);
-	shaderHandler.SetUniformSampler2D(shaderHandler.uMidGroundTexture, GL_TEXTURE3, terrain.GetTextureIDs()[2]);
-	shaderHandler.SetUniformSampler2D(shaderHandler.uPeaksTexture, GL_TEXTURE4, terrain.GetTextureIDs()[3]);
+	terrainShaderHandler.SetUniformSampler2D(terrainShaderHandler.uHeightmap, GL_TEXTURE0, terrain.GetHeightmap().textureID);
+	terrainShaderHandler.SetUniformSampler2D(terrainShaderHandler.uBaseTexture, GL_TEXTURE1, terrain.GetTextureIDs()[0]);
+	terrainShaderHandler.SetUniformSampler2D(terrainShaderHandler.uGroundTexture, GL_TEXTURE2, terrain.GetTextureIDs()[1]);
+	terrainShaderHandler.SetUniformSampler2D(terrainShaderHandler.uRockTexture, GL_TEXTURE3, terrain.GetTextureIDs()[2]);
+	terrainShaderHandler.SetUniformSampler2D(terrainShaderHandler.uPeaksTexture, GL_TEXTURE4, terrain.GetTextureIDs()[3]);
+	terrainShaderHandler.SetUniformSampler2D(terrainShaderHandler.uShadowmap, GL_TEXTURE5, shadowmap.textureID);
 
 	glDrawArrays(GL_TRIANGLES, 0, terrain.GetModel().vertexCount);
 

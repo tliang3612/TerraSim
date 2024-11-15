@@ -9,10 +9,13 @@
 #include "renderer.h"
 #include "terrain.h"
 #include "data_factory.h"
-#include "shader_handler.h"
+#include "shader_handlers/terrain_shader_handler.h"
+#include "shader_handlers/shadowmap_shader_handler.h"
 #include "camera.h"
 #include "sculptor.hpp"
 #include "raycaster.hpp"
+#include "shadowmap.hpp"
+#include "light.hpp"
 #undef main // Fixes weird SDL issue
 
 
@@ -27,6 +30,11 @@ int main()
 	//create the camera
 	Camera camera = Camera(glm::vec3(0.0f, 300.f, 0.0f), 0.0f, 0.f, 0.0f);
 
+	//init shaders
+	TerrainShaderHandler terrainShaderHandler = TerrainShaderHandler();
+	ShadowmapShaderHandler shadowmapShaderHandler = ShadowmapShaderHandler();
+	DataFactory dataFactory = DataFactory();
+
 	//user inputs to move camera
 	bool keyW = false, keyA = false, keyS = false, keyD = false, keyZ = false, keyX = false;
 	bool keyLeftShift = false, keyRightShift = false;
@@ -34,18 +42,16 @@ int main()
 	int mouseX = 0.f, mouseY = 0.f;
 	bool mouseLeft = false, mouseRight = false;
 	float sculptRadius = 100.f;
-
-	//lightDirection vector
-	glm::vec3 lightDirection(0.f, 1.f, 0.f);
-
-	ShaderHandler shaderHandler = ShaderHandler();
-	DataFactory dataFactory = DataFactory();
+	
+	Light light(glm::vec3(0.f, 1.f, 0.f), glm::vec3(100000.f, 150000.f, 0.f), .8f);
 
 	//load the textures
 	GLuint textureID1 = dataFactory.LoadTexture("resources/Base.png");
 	GLuint textureID2 = dataFactory.LoadTexture("resources/Ground.png");
-	GLuint textureID3 = dataFactory.LoadTexture("resources/MidGround.png");
+	GLuint textureID3 = dataFactory.LoadTexture("resources/Rock.png");
 	GLuint textureID4 = dataFactory.LoadTexture("resources/Peaks.png");
+	static float texScaleVal = 100.f;
+
 
 	std::vector<GLuint> textureIDs = { textureID1, textureID2, textureID3, textureID4 };
 
@@ -140,27 +146,44 @@ int main()
 		}
 
 		// prepare the next frame for rendering
-		renderer.PrepareFrame();
 
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		glm::mat4 projectionMatrix = renderer.GetProjectionMatrix();
 		glm::mat4 viewMatrix = camera.GetViewMatrix();
 
-		//Terrain Render Logic
+		glm::mat4 lightProjectionMatrix = light.GetProjectionMatrix();
+		glm::mat4 lightViewMatrix = light.GetViewMatrix();
+
+		Shadowmap shadowmap = terrain.GetShadowmap();
+		//render terrain to shadowmap, shadow pass
 		{
-			glm::vec4 clip = glm::vec4(0.0f); //no clipping as of now. might change for shadows
-			shaderHandler.Enable();
-			shaderHandler.SetMinHeight(terrain.GetMinHeight());
-			shaderHandler.SetMaxHeight(terrain.GetMaxHeight());
-			shaderHandler.SetViewProjection(projectionMatrix * viewMatrix);
-			shaderHandler.SetLightDirection(lightDirection);
-			shaderHandler.SetClip(clip);
+			shadowmapShaderHandler.Enable();
+			shadowmapShaderHandler.SetLightViewProjection(lightProjectionMatrix * lightViewMatrix);
+			shadowmapShaderHandler.Disable();
 
-			renderer.RenderTerrain(terrain, shaderHandler);
-
-			shaderHandler.Disable();
+			shadowmap.BindFrameBuffer();
+			renderer.RenderTerrain(terrain, terrainShaderHandler, shadowmap);
+			shadowmap.UnbindFrameBuffer();
 		}
+		renderer.PrepareFrame();
+
+		//Main Render Logic
+		{
+			glm::vec4 clip = glm::vec4(0.0f); 
+			terrainShaderHandler.Enable();
+			terrainShaderHandler.SetMinHeight(terrain.GetMinHeight());
+			terrainShaderHandler.SetMaxHeight(terrain.GetMaxHeight());
+			terrainShaderHandler.SetViewProjection(projectionMatrix * viewMatrix);
+			terrainShaderHandler.SetLightDirection(light.lightDirection);
+			terrainShaderHandler.SetLightIntensity(light.lightIntensity);
+			terrainShaderHandler.SetCameraPosition(camera.position);
+			terrainShaderHandler.SetTextureScale(texScaleVal);
+			terrainShaderHandler.SetClip(clip);
+			renderer.RenderTerrain(terrain, terrainShaderHandler, shadowmap);
+
+			terrainShaderHandler.Disable();
+		}
+
 
 		//render the ImGUI
 		renderer.PrepareImGuiFrame();
@@ -169,17 +192,18 @@ int main()
 				ImGui::PushItemWidth(150);
 				static float azimuthVal = 0.f; //horizontal rotation of light
 				static float altitudeVal = 0.f; //vertical rotation of light
-				static float intensity = 0.f;
+				static float intensity = 1.f;
 				ImGui::SliderFloat("Light Azimuth", &azimuthVal, 0.0f, 360.f);
 				ImGui::SliderFloat("Light Altitude", &altitudeVal, 0.0f, 360.f);
-				ImGui::SliderFloat("Light Intensity", &intensity, 0.0f, 100.f); //TODO
+				ImGui::SliderFloat("Light Intensity", &intensity, 0.0f, 1.f); 
 
 				float horizontalScaling = std::cos(glm::radians(altitudeVal));
 				float xAngle = std::cos(glm::radians(azimuthVal)) * horizontalScaling;
 				float yAngle = std::sin(glm::radians(altitudeVal));
 				float zAngle = std::sin(glm::radians(azimuthVal)) * horizontalScaling;
 
-				lightDirection = glm::normalize(glm::vec3(xAngle, yAngle, zAngle));
+				light.lightDirection = glm::normalize(glm::vec3(xAngle, yAngle, zAngle));
+				light.lightIntensity = intensity;
 
 				ImGui::PopItemWidth();
 			}
@@ -230,14 +254,14 @@ int main()
 					float ndcX = (2.0f * mouseX) / displayWidth - 1.0f;
 					float ndcY = 1.0f - (2.0f * mouseY) / displayHeight;
 
-					glm::vec3 intersectionPoint = Raycaster::RaycastFromCameraToTerrain(camera.position, terrain, ndcX, ndcY, projectionMatrix, viewMatrix);
+					glm::vec3 intersectionPoint = Raycaster::GetRaycastFromCameraToTerrain(camera.position, terrain, ndcX, ndcY, projectionMatrix, viewMatrix);
 
 					if (intersectionPoint.y != std::numeric_limits<float>::max()) {
 						if (!ImGui::GetIO().WantCaptureMouse) {
-							shaderHandler.Enable();
-							shaderHandler.SetIndicatorPosition(glm::vec2(intersectionPoint.x, intersectionPoint.z));
-							shaderHandler.SetIndicatorRadius(sculptRadius);
-							shaderHandler.Disable();
+							terrainShaderHandler.Enable();
+							terrainShaderHandler.SetIndicatorPosition(glm::vec2(intersectionPoint.x, intersectionPoint.z));
+							terrainShaderHandler.SetIndicatorRadius(sculptRadius);
+							terrainShaderHandler.Disable();
 
 							if (mouseLeft) {
 								Sculptor::Sculpt(terrain.GetHeightmap(), intersectionPoint.x, intersectionPoint.z, sculptRadius, strength / 2.f, brushType);
@@ -247,10 +271,9 @@ int main()
 					}
 				}
 				else {
-					shaderHandler.Enable();
-					shaderHandler.SetIndicatorRadius(0);
-					shaderHandler.Disable();
-
+					terrainShaderHandler.Enable();
+					terrainShaderHandler.SetIndicatorRadius(0);
+					terrainShaderHandler.Disable();
 				}
 
 				ImGui::PopItemWidth();
@@ -308,6 +331,8 @@ int main()
 					ImGui::Text(textureNames[i].c_str());
 				}
 
+				ImGui::SliderFloat("Texture Scale", &texScaleVal, 10.0f, 300.f);
+
 				ImGui::PopItemWidth();
 			}
 			ImGui::End();
@@ -336,7 +361,7 @@ int main()
 		renderer.RenderImGuiFrame();
 		renderer.Update();
 	}
-	shaderHandler.Destroy();
+	terrainShaderHandler.Destroy();
 	dataFactory.DeleteDataObjects();
 	renderer.Destroy();
 

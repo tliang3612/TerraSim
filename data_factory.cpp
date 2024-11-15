@@ -19,6 +19,15 @@ GLuint DataFactory::CreateVBO(){
 	return vboID;
 }
 
+//Create frame buffer
+GLuint DataFactory::CreateFBO() {
+	GLuint framebufferID;
+	glGenFramebuffers(1, &framebufferID);
+	m_fboList.push_back(framebufferID);
+	return framebufferID;
+}
+
+
 //Create an opengl texture
 GLuint DataFactory::CreateTexture(){
 	GLuint textureID;
@@ -26,6 +35,7 @@ GLuint DataFactory::CreateTexture(){
 	m_textureList.push_back(textureID);
 	return textureID;
 }
+
 
 // Create a model from model data
 Model DataFactory::CreateModel(float* vertices, float* textures, int vertexCount)
@@ -48,6 +58,29 @@ Model DataFactory::CreateModel(float* vertices, float* textures, int vertexCount
 	glBindVertexArray(0);
 	return Model(vaoID, vertexCount);
 }
+
+// Create a model from model data
+Model DataFactory::CreateModelWithoutTextures(float* vertices, int vertexCount)
+{
+	//create vao
+	GLuint vaoID = CreateVAO();
+
+	//bind the vao, making all subsequent operations configure this active vao.
+	glBindVertexArray(vaoID);
+	/*
+	For all models created, the attribute indices are configured as such:
+		0 for vertices
+		1 for textures
+	*/
+
+	//Create 2 vbos that dictate how data is layed out for this model
+	CreateAndPopulateBuffer(0, 3, vertices, vertexCount);
+
+	glBindVertexArray(0);
+	return Model(vaoID, vertexCount);
+}
+
+
 
 GLuint DataFactory::LoadTexture(std::string texturePath){
 	//stb stuff -------------------------------------------->

@@ -7,6 +7,7 @@ out vec3 vPosition;
 out vec2 vTexture;
 out vec3 vColor;
 out vec3 vNormal;
+out vec4 vFragPositionLight;
 
 uniform vec4 uClip;
 uniform mat4 uViewProjection;

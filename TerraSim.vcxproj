@@ -161,7 +161,9 @@
     <ClCompile Include="display.cpp" />
     <ClCompile Include="data_factory.cpp" />
     <ClCompile Include="renderer.cpp" />
-    <ClCompile Include="shader_handler.cpp" />
+    <ClCompile Include="shader_handlers\shader_handler.cpp" />
+    <ClCompile Include="shader_handlers\shadowmap_shader_handler.cpp" />
+    <ClCompile Include="shader_handlers\terrain_shader_handler.cpp" />
     <ClCompile Include="terrain.cpp" />
     <ClCompile Include="TerraSim.cpp" />
     <ClCompile Include="texture_handler.cpp" />
@@ -528,10 +530,14 @@
     <ClInclude Include="display.h" />
     <ClInclude Include="heightmap.hpp" />
     <ClInclude Include="data_factory.h" />
+    <ClInclude Include="light.hpp" />
     <ClInclude Include="raycaster.hpp" />
     <ClInclude Include="renderer.h" />
     <ClInclude Include="sculptor.hpp" />
-    <ClInclude Include="shader_handler.h" />
+    <ClInclude Include="shader_handlers\shader_handler.h" />
+    <ClInclude Include="shader_handlers\shadowmap_shader_handler.h" />
+    <ClInclude Include="shader_handlers\terrain_shader_handler.h" />
+    <ClInclude Include="shadowmap.hpp" />
     <ClInclude Include="terrain.h" />
     <ClInclude Include="texture_handler.h" />
     <ClInclude Include="util\util.h" />
@@ -675,6 +681,10 @@
     <None Include="opengl32.dll" />
     <None Include="README.md" />
     <None Include="SDL2.dll" />
+    <None Include="shaders\shadowmap.fs" />
+    <None Include="shaders\shadowmap.vs" />
+    <None Include="shaders\terrain.fs" />
+    <None Include="shaders\terrain.vs" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="LICENSE.txt" />

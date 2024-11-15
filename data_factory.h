@@ -20,16 +20,18 @@ public:
 	GLuint CreateVAO();
 	GLuint CreateVBO();
 	GLuint CreateTexture();
+	GLuint CreateFBO();
 	void CreateAndPopulateBuffer(int attributeIndex, int elementWidth, float* data, int dataLength);
 	Model CreateModel(float* vertices, float* textures, int vertexCount);
+	Model CreateModelWithoutTextures(float* vertices, int vertexCount);
 	GLuint LoadTexture(std::string texturePath);
 	void DeleteDataObjects();
 
 private: 
 	std::vector<GLuint> m_vaoList;
 	std::vector<GLuint> m_vboList;
+	std::vector<GLuint> m_fboList;
 	std::vector<GLuint> m_textureList;
-	std::vector<GLuint> m_frameBufferList;
 
 };
 
