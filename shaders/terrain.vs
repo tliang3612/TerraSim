@@ -32,8 +32,4 @@ void main() {
 	vPosition = worldPosition.xyz;
 	vTexture = iTexture;
 	vNormal = CalculateSurfaceNormal(iTexture);
-	//float height = texture(uHeightmap, iTexture).r;
-	//float grayscaleIntensity = clamp((height - (uMinHeight)) / (uMaxHeight - (uMinHeight)), 0.0, 1.0); 
-	//vec3 grayscaleColor = vec3(grayscaleIntensity); 
-	//vColor = grayscaleColor;
 }

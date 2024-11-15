@@ -55,7 +55,7 @@ void Camera::Rotate(float mouseDeltaX, float mouseDeltaY, int displayWidth, int 
 
 void Camera::Update(float deltaTime, bool keyW, bool keyA, bool keyS, bool keyD, bool keyZ, bool keyX, bool keyLeftShift, float mouseDeltaX, float mouseDeltaY, int displayWidth, int displayHeight){
 	//adjust movement speed if holding down shift
-	float cameraSpeed = keyLeftShift ? 5.f : 10.f;
+	float cameraSpeed = keyLeftShift ? 50.f : 100.f;
 
 	//update camera based on inputs
 	if (keyW) MoveLongitude(deltaTime, -cameraSpeed);

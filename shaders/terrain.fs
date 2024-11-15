@@ -39,7 +39,7 @@ vec3 BlendTextures(vec2 texScale){
     vec3 peaksColor = texture(uPeaksTexture, texScale).rgb;
     
     float epsilon = 0.0001f; // remove divide by 0 case
-    float threshold = uMinHeight + .3f * (uMaxHeight - uMinHeight); //add 30% of maxheight to minheight
+    float threshold = uMinHeight + .4f * (uMaxHeight - uMinHeight); //add 40% of maxheight to minheight
     float normalizedMaxHeight = clamp((vPosition.y + uMaxHeight) / (2.0 * uMaxHeight), 0.0, 1.0);
     float normalizedMinHeight = clamp((vPosition.y - uMinHeight) / (threshold - uMinHeight + epsilon), 0.0f, 1.0f); //[0, 1]
 
@@ -48,14 +48,14 @@ vec3 BlendTextures(vec2 texScale){
     vec3 currentColor = mix(baseColor, rockColor, normalizedMinHeight); //once position reaches threshold, rockColor takes over
 
     vec3 upVector = vec3(0.0f, 1.0f, 0.0f);
-    float slopeFactor = smoothstep(.65f, 1.f, dot(unitNormal, upVector)); //slope 
-    float minHeightFactor = normalizedMinHeight * slopeFactor; //decrease the closer it is to minheight
-    float maxHeightFactor = (1.f - normalizedMaxHeight) * slopeFactor * 2.f; //decrease the closer it is to maxheight  
+    float slopeFactor = smoothstep(.5f, 1.f, dot(unitNormal, upVector)); //slope 
+    float minHeightFactor = smoothstep(.6f, 1.f, normalizedMinHeight) * slopeFactor; //closer to minHeight, lower the value
+    float maxHeightFactor = smoothstep(0.1f, .6f, 1.0f - normalizedMaxHeight) * slopeFactor; //further away from maxheight, higher the value
     float groundFactor = min(minHeightFactor, maxHeightFactor);
     currentColor = mix(currentColor, groundColor, groundFactor);
 
     // blend current color with peaks
-    float peaksFactor = pow(smoothstep(0.7f, 1.0f, normalizedMaxHeight), 2.f); //rapidly increase bias as position reaches higher
+    float peaksFactor = smoothstep(0.7f, 1.0f, normalizedMaxHeight); //rapidly increase bias as position reaches higher
     currentColor = mix(currentColor, peaksColor, peaksFactor);
 
     return currentColor;
@@ -84,7 +84,7 @@ float CalculateShadow(){
 void main() {
 	vec3 unitNormal = normalize(vNormal); // Must normalize for dot product math calculation things
     vec3 lightColor = vec3(1.f, 1.f,1.f);
-    vec3 ambient = lightColor * 0.2f;
+    vec3 ambient = lightColor * 0.3f;
     float shadow = CalculateShadow();
 
     //diffuse calculations

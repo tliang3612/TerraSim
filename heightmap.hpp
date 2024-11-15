@@ -6,6 +6,13 @@
 #include <memory>
 #include "data_factory.h"
 #include <iostream>
+#include <map>
+
+const FastNoise::NoiseType noiseTypeArray[3] = {
+	FastNoise::Perlin,
+	FastNoise::SimplexFractal
+};
+
 struct Heightmap {
 	FastNoise noise;
 	GLuint textureID;
@@ -14,9 +21,10 @@ struct Heightmap {
 	float heightmapSize;
 	float maxHeight = 0;
 	float minHeight = 1;
-	float scale = 0.2f;
-	float amplitude = 80.0f;
 
+	// Noise parameters
+	float frequency = .3f;
+	float amplitude = 80.0f;
 
 	Heightmap() = default;
 	
@@ -26,10 +34,7 @@ struct Heightmap {
 		this->heightmapSize = size;
 		this->heightmapResolution = resolution;
 		map = new float[heightmapResolution * heightmapResolution]; //using raw pointer for map for simplicity
-		noise.SetNoiseType(FastNoise::SimplexFractal);
-		noise.SetFractalOctaves(6);
-
-		GenerateHeightsUsingNoise();
+		GenerateHeightsUsingNoise(0);
 
 		textureID = dataFactory.CreateTexture();
 		glBindTexture(GL_TEXTURE_2D, textureID); //make heightmap texture configurable
@@ -41,14 +46,35 @@ struct Heightmap {
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-	void GenerateHeightsUsingNoise() {
+	void GenerateHeightsUsingNoise(int noiseType) {
 		noise.SetSeed(time(NULL));
+		noise.SetNoiseType(noiseTypeArray[noiseType]);
+		noise.SetFractalOctaves(6);
+
 		//Init heightmap with noise values
 		for (int i = 0; i < heightmapResolution; i++) {
 			for (int j = 0; j < heightmapResolution; j++) {
 				float x = float(i) / float(heightmapResolution - 1) * 2.0f - 1.0f;
 				float y = float(j) / float(heightmapResolution - 1) * 2.0f - 1.0f;
-				map[j * heightmapResolution + i] = SampleNoise(x * heightmapSize, y * heightmapSize);
+
+				int octaves = 5;
+				float gain = 0.6f; 
+				float lacunarity = 2.0f;
+				float baseHeight = fBm(glm::vec2(x,y), octaves, gain, lacunarity);
+
+				float perlinNoise = baseHeight;
+				float billowNoise = abs(perlinNoise);
+				float ridgeNoise = 1.0f - billowNoise;
+
+				float Ss = -.5f;
+				float Se = 5.f;
+				float Sh = 10.0f;				
+				float combinedNoise = (Ss >= 0.0f) ? glm::mix(perlinNoise, billowNoise, abs(Ss)) : glm::mix(perlinNoise, ridgeNoise, Ss);
+
+				float height = combinedNoise * 30.f; //* pow(abs(combinedNoise), Se) * Sh;
+
+
+				map[j * heightmapResolution + i] = height; //SampleNoise(x * heightmapSize * frequency, y * heightmapSize * frequency) * 80.f;
 				if (map[j * heightmapResolution + i] < minHeight) {
 					minHeight = map[j * heightmapResolution + i];
 				}
@@ -59,9 +85,23 @@ struct Heightmap {
 		}
 	}
 
+	float fBm(glm::vec2 p, int octaves, float gain, float lacunarity) {
+		float amplitude = 1.f;
+		float frequency = 0.5f;
+		float sum = 0.0;
+
+		for (int i = 0; i < octaves; ++i) {
+			sum += amplitude * SampleNoise(p.x * frequency, p.y * frequency);
+			amplitude *= gain;      
+			frequency *= lacunarity;
+		}
+
+		return sum;
+	}
+
 	float SampleNoise(float x, float y)
 	{
-		return noise.GetNoise(x * scale, y * scale) * amplitude;
+		return noise.GetNoise(x * heightmapSize, y * heightmapSize);
 	}
 
 	//delete the map raw pointer

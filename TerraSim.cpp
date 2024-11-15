@@ -57,22 +57,24 @@ int main()
 
 	//Terrain logic
 	TerrainFactory terrainFactory = TerrainFactory();
-	Terrain terrain = terrainFactory.GenerateTerrain(dataFactory, 500, 1000, textureIDs);
+	Terrain terrain = terrainFactory.GenerateTerrain(dataFactory, 512, 1024, textureIDs);
 
-	float deltaTime = .1f;
+	//for shadowmap
+	static bool shadowmapDirty = true;
+
 	auto deltaTimeCounter = SDL_GetPerformanceCounter(); //record the deltaTime counter
 	auto fpsCounter = SDL_GetPerformanceCounter(); //record the fps counter
 	auto frequency = SDL_GetPerformanceFrequency(); //performance counter ticks per second
-	auto frameCount = 0;
 	float fps = 0;
 	float targetFrameTime = 1000.f / 265.f; //cap frame rate at 265. This is to ensure that extra resources aren't wasted on this application. Might Change
-
 	bool shouldRun = true;
 
 	while (shouldRun) {
-		
-		//used to calculate delta time
-		auto start = SDL_GetPerformanceCounter();
+
+		//FPS and DeltaTime Logic 
+		auto currentCounter = SDL_GetPerformanceCounter(); //ticks as of now
+		float deltaTime = static_cast<float>(currentCounter - deltaTimeCounter) / frequency; //difference between start and current ticks. Divide by frequency to get seconds
+		deltaTimeCounter = currentCounter; //set start ticks to current ticks
 
 		SDL_Event e;
 		while (SDL_PollEvent(&e)) {
@@ -104,7 +106,7 @@ int main()
 				else if (button == SDL_BUTTON_RIGHT) mouseRight = false;
 			}
 			else if (e.type == SDL_MOUSEWHEEL) {
-				float incrementVal = 1.5f;
+				float incrementVal = 175.f * deltaTime;
 				if (e.wheel.y > 0) {
 					sculptRadius += incrementVal;
 				}
@@ -122,41 +124,13 @@ int main()
 			}
 		}
 
-		camera.Update(deltaTime, keyW, keyA, keyS, keyD, keyZ, keyX, keyLeftShift, mouseDragX, mouseDragY, displayWidth, displayHeight);
-
-		//FPS and DeltaTime Logic 
-		{
-			auto currentCounter = SDL_GetPerformanceCounter(); //ticks as of now
-			float deltaTime = static_cast<float>(currentCounter - deltaTimeCounter) / frequency; //difference between start and current ticks. Divide by frequency to get seconds
-			deltaTimeCounter = currentCounter; //set start ticks to current ticks
-
-			//frames are moving too fast. pause until desired time 
-			if (deltaTime < targetFrameTime) {
-				SDL_Delay(static_cast<Uint32>(targetFrameTime - deltaTime));
-			}
-
-			float fpsUpdateDeltaTime = static_cast<float>(currentCounter - fpsCounter) / frequency; //delta time for fps calculations. Needs to be different var because fpsCounter 
-																									//will only update every 0.1s rather than each frame
-			frameCount++; //increment frames
-			if (fpsUpdateDeltaTime > 0.1f) { //update fps every .1s
-				fps = frameCount / fpsUpdateDeltaTime;
-				fpsCounter = currentCounter;
-				frameCount = 0;
-			}
-		}
-
-		// prepare the next frame for rendering
-
-
-		glm::mat4 projectionMatrix = renderer.GetProjectionMatrix();
-		glm::mat4 viewMatrix = camera.GetViewMatrix();
-
-		glm::mat4 lightProjectionMatrix = light.GetProjectionMatrix();
-		glm::mat4 lightViewMatrix = light.GetViewMatrix();
+		camera.Update(deltaTime, keyW, keyA, keyS, keyD, keyZ, keyX, keyLeftShift, mouseDragX, mouseDragY, displayWidth, displayHeight);	
 
 		Shadowmap shadowmap = terrain.GetShadowmap();
-		//render terrain to shadowmap, shadow pass
-		{
+		//render terrain to shadowmap if light has moved (shadowmapDirty)
+		if(shadowmapDirty) {
+			glm::mat4 lightProjectionMatrix = light.GetProjectionMatrix();
+			glm::mat4 lightViewMatrix = light.GetViewMatrix();
 			shadowmapShaderHandler.Enable();
 			shadowmapShaderHandler.SetLightViewProjection(lightProjectionMatrix * lightViewMatrix);
 			shadowmapShaderHandler.Disable();
@@ -164,8 +138,14 @@ int main()
 			shadowmap.BindFrameBuffer();
 			renderer.RenderTerrain(terrain, terrainShaderHandler, shadowmap);
 			shadowmap.UnbindFrameBuffer();
+			shadowmapDirty = false;
 		}
+
+		// prepare the next main frame for rendering
 		renderer.PrepareFrame();
+
+		glm::mat4 projectionMatrix = renderer.GetProjectionMatrix();
+		glm::mat4 viewMatrix = camera.GetViewMatrix();
 
 		//Main Render Logic
 		{
@@ -182,6 +162,11 @@ int main()
 			renderer.RenderTerrain(terrain, terrainShaderHandler, shadowmap);
 
 			terrainShaderHandler.Disable();
+		}
+
+		//frames are moving too fast. pause until desired time 
+		if (deltaTime < targetFrameTime) {
+			SDL_Delay(static_cast<Uint32>(targetFrameTime - deltaTime));
 		}
 
 
@@ -202,7 +187,12 @@ int main()
 				float yAngle = std::sin(glm::radians(altitudeVal));
 				float zAngle = std::sin(glm::radians(azimuthVal)) * horizontalScaling;
 
-				light.lightDirection = glm::normalize(glm::vec3(xAngle, yAngle, zAngle));
+				glm::vec3 newLightDirection = glm::normalize(glm::vec3(xAngle, yAngle, zAngle));
+				if (light.lightDirection != newLightDirection) {
+					shadowmapDirty = true;
+				}
+
+				light.lightDirection = newLightDirection;
 				light.lightIntensity = intensity;
 
 				ImGui::PopItemWidth();
@@ -213,17 +203,18 @@ int main()
 				ImGui::PushItemWidth(150);
 				static const char* noiseTypes[] = {
 					"Perlin",
-					"Fractal"
+					"Simplex"
 				};
 				static int noiseType = 0;
 				ImGui::Combo("Noise Type", &noiseType, noiseTypes, sizeof(noiseTypes) / sizeof(noiseTypes[0]));
 
-				static float amplitude = 0.1f;
-				ImGui::SliderFloat("Amplitude", &amplitude, 0.0f, 1.0f);
+				static float amplitude = 100.f;
+				ImGui::SliderFloat("Amplitude", &amplitude, 0.0f, 200.0f);
 
 				if(ImGui::Button("Generate Terrain")){
 					Heightmap map = terrain.GetHeightmap();
-					map.GenerateHeightsUsingNoise();
+					map.amplitude = amplitude;
+					map.GenerateHeightsUsingNoise(noiseType);
 					map.Update();
 				}
 
@@ -244,7 +235,7 @@ int main()
 				static int brushType = 0;
 				ImGui::Combo("Brush Type", &brushType, brushTypes, sizeof(brushTypes) / sizeof(brushTypes[0]));
 
-				static float strength = 0.5f;
+				static float strength = .5f;
 				ImGui::SliderFloat("Strength", &strength, 0.0f, 1.0f);
 
 				static bool brushEnabled = true;
@@ -264,7 +255,7 @@ int main()
 							terrainShaderHandler.Disable();
 
 							if (mouseLeft) {
-								Sculptor::Sculpt(terrain.GetHeightmap(), intersectionPoint.x, intersectionPoint.z, sculptRadius, strength / 2.f, brushType);
+								Sculptor::Sculpt(terrain.GetHeightmap(), intersectionPoint.x, intersectionPoint.z, sculptRadius, strength * 90.f * deltaTime, brushType);
 								terrain.Update();
 							}
 						}
@@ -294,7 +285,7 @@ int main()
 
 				std::vector<GLuint> textureIDs = terrain.GetTextureIDs();
 				static GLuint textures[4] = { textureIDs[0],textureIDs[1],textureIDs[2], textureIDs[3]};
-				const std::string textureNames[4] = { "Base Texture", "Ground Texture", "Mid-Ground Texture", "Peaks Texture" };
+				const std::string textureNames[4] = { "Base Texture", "Ground Texture", "Rock Texture", "Peaks Texture" };
 
 				// in scope function that will handle texture selection
 				auto HandleTextureSelection = [&](int index) {
@@ -338,6 +329,15 @@ int main()
 			ImGui::End();
 
 			ImGui::Begin("Debug"); {
+			    static int frameCount = 0; //increment frames
+				float fpsUpdateDeltaTime = static_cast<float>(SDL_GetPerformanceCounter() - fpsCounter) / frequency; //delta time for fps calculations. Needs to be different var because fpsCounter 
+				//will only update every 0.1s rather than each frame
+				frameCount++; //increment frames
+				if (fpsUpdateDeltaTime > 0.1f) { //update fps every .1s
+					fps = frameCount / fpsUpdateDeltaTime;
+					fpsCounter = currentCounter;
+					frameCount = 0;
+				}
 
 				ImGui::Text("FPS: %f", fps);
 				ImGui::Text("Camera X: %f", camera.position.x);

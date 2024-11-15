@@ -112,5 +112,5 @@ Terrain TerrainFactory::GenerateTerrain(DataFactory dataFactory, float size, int
     //create model with vertex and texture data
     Model terrainModelData = dataFactory.CreateModel(verticesOut.data(), texturesOut.data(), verticesOut.size() / 3);
     Model shadowmapModelData = dataFactory.CreateModelWithoutTextures(verticesOut.data(), verticesOut.size() / 3);
-    return Terrain(terrainModelData, Heightmap(size, resolution, dataFactory), Shadowmap(resolution*2, dataFactory), textureIDs);
+    return Terrain(terrainModelData, Heightmap(size, resolution, dataFactory), Shadowmap(resolution, dataFactory), textureIDs);
 }
