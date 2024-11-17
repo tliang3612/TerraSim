@@ -70,7 +70,6 @@ Model DataFactory::CreateModelWithoutTextures(float* vertices, int vertexCount)
 	/*
 	For all models created, the attribute indices are configured as such:
 		0 for vertices
-		1 for textures
 	*/
 
 	//Create 2 vbos that dictate how data is layed out for this model
@@ -80,7 +79,25 @@ Model DataFactory::CreateModelWithoutTextures(float* vertices, int vertexCount)
 	return Model(vaoID, vertexCount);
 }
 
+// Store object data in the vertex buffer object.
+void DataFactory::CreateAndPopulateBuffer(int attributeIndex, int elementWidth, float* data, int dataLength) {
+	//create vbo
+	GLuint vboID = CreateVBO();
 
+	//bind the vbo, making it the active buffer for storing vertex attribute data
+	glBindBuffer(GL_ARRAY_BUFFER, vboID);
+
+	//uploads vertex data of size (dataLength * elementWidth * sizeof(float)) to the GPU
+	glBufferData(GL_ARRAY_BUFFER, dataLength * elementWidth * sizeof(float), data, GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(attributeIndex);  // Enable texture coordinate attribute
+
+	//specify how the data should be interpreted for the given attribute index. no stride needed as each data is within its own vbo
+	glVertexAttribPointer(attributeIndex, elementWidth, GL_FLOAT, GL_FALSE, 0, 0);
+
+	//unbind the buffer
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
 
 GLuint DataFactory::LoadTexture(std::string texturePath){
 	//stb stuff -------------------------------------------->
@@ -114,25 +131,30 @@ GLuint DataFactory::LoadTexture(std::string texturePath){
 	return textureID;
 }
 
+GLuint DataFactory::LoadCubemapTexture(std::vector<std::string> texturePaths)
+{
+	GLuint textureID = CreateTexture();
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+	for (int i = 0; i < texturePaths.size(); i++) {
+		int width;
+		int height;
+		int channels;
+		stbi_set_flip_vertically_on_load(0);
+		unsigned char* data = stbi_load(texturePaths[i].c_str(), &width, &height, &channels, STBI_rgb);
+		if (!data) {
+			util::fatal_error("Can't load texture from '%s' - %s\n", texturePaths[i].c_str(), stbi_failure_reason());
+		}
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		stbi_image_free(data);
+	}
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
-// Store object data in the vertex buffer object.
-void DataFactory::CreateAndPopulateBuffer(int attributeIndex, int elementWidth, float* data, int dataLength) {
-	//create vbo
-	GLuint vboID = CreateVBO(); 
-
-	//bind the vbo, making it the active buffer for storing vertex attribute data
-	glBindBuffer(GL_ARRAY_BUFFER, vboID);
-
-	//uploads vertex data of size (dataLength * elementWidth * sizeof(float)) to the GPU
-	glBufferData(GL_ARRAY_BUFFER, dataLength * elementWidth * sizeof(float), data, GL_STATIC_DRAW);
-
-	glEnableVertexAttribArray(attributeIndex);  // Enable texture coordinate attribute
-
-	//specify how the data should be interpreted for the given attribute index. no stride needed as each data is within its own vbo
-	glVertexAttribPointer(attributeIndex, elementWidth, GL_FLOAT, GL_FALSE, 0, 0); 
-
-	//unbind the buffer
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	return textureID;
 }
 
 

@@ -84,9 +84,16 @@ void ShaderHandler::SetUniformMatrix4(GLuint location, glm::mat4& value) {
 
 void ShaderHandler::SetUniformSampler2D(GLuint location, GLenum texture, GLuint textureID) {
     glActiveTexture(texture);
+    glBindTexture(GL_TEXTURE_2D, textureID);
     glEnable(GL_TEXTURE_2D);
     glUniform1i(location, texture - GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, textureID);
+}
+
+void ShaderHandler::SetUniformSamplerCube(GLuint location, GLenum texture, GLuint cubemapTextureID) {
+    glActiveTexture(texture);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTextureID);
+    glEnable(GL_TEXTURE_CUBE_MAP);
+    glUniform1i(location, texture - GL_TEXTURE0);
 }
 
 //bind an attribute to a shader variable.

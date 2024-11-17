@@ -1,5 +1,5 @@
 ﻿  TerraSim.cpp
-C:\Users\broni\source\repos\TerraSim\heightmap.hpp(45,21): warning C4244: 'argument': conversion from 'time_t' to 'int', possible loss of data
+C:\Users\broni\source\repos\TerraSim\heightmap.hpp(50,21): warning C4244: 'argument': conversion from 'time_t' to 'int', possible loss of data
   (compiling source file 'TerraSim.cpp')
   
 C:\Users\broni\source\repos\TerraSim\sculptor.hpp(15,20): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
@@ -28,6 +28,12 @@ C:\Users\broni\source\repos\TerraSim\raycaster.hpp(26,92): warning C4244:       
 C:\Users\broni\source\repos\TerraSim\raycaster.hpp(26,92): warning C4244:         ]
   (compiling source file 'TerraSim.cpp')
   
-C:\Users\broni\source\repos\TerraSim\TerraSim.cpp(42,13): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\broni\source\repos\TerraSim\TerraSim.cpp(42,27): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\broni\source\repos\TerraSim\TerraSim.cpp(44,13): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\broni\source\repos\TerraSim\TerraSim.cpp(44,27): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+  renderer.cpp
+C:\Users\broni\source\repos\TerraSim\heightmap.hpp(50,21): warning C4244: 'argument': conversion from 'time_t' to 'int', possible loss of data
+  (compiling source file 'renderer.cpp')
+  
+  skybox_shader_handler.cpp
+  Generating Code...
   TerraSim.vcxproj -> C:\Users\broni\source\repos\TerraSim\x64\Debug\TerraSim.exe

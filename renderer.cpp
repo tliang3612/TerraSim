@@ -4,7 +4,7 @@
 #include <imgui/imgui_impl_sdl2.h>
 #include <glad/glad.h>
 #include "terrain.h"
-#include "shader_handlers/terrain_shader_handler.h"
+#include "cubemap.h"
 
 
 Renderer::Renderer(std::string title, int width, int height)
@@ -61,6 +61,24 @@ void Renderer::RenderTerrain(Terrain terrain, TerrainShaderHandler terrainShader
 	glDisableVertexAttribArray(1);
 	glDisableVertexAttribArray(0);
 	glBindVertexArray(0);
+}
+
+void Renderer::RenderSkybox(Cubemap cubemap, SkyboxShaderHandler skyboxShaderHandler) {
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+	glDisable(GL_CULL_FACE);
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE); 
+
+	glBindVertexArray(cubemap.GetModel().vaoID);
+	glEnableVertexAttribArray(0);
+	skyboxShaderHandler.SetUniformSamplerCube(skyboxShaderHandler.uCubemap, GL_TEXTURE6, cubemap.GetTextureID());
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glDisableVertexAttribArray(0);
+	glBindVertexArray(0);
+
+	glEnable(GL_CULL_FACE);
+	glDepthMask(GL_TRUE); 
+	glEnable(GL_DEPTH_TEST);
 }
 
 void Renderer::Update() {

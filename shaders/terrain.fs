@@ -66,18 +66,33 @@ float CalculateShadow(){
 
     vec4 fragPositionInLightSpace = uLightViewProjection * vec4(vPosition, 1.f);
     vec3 lightSpacePosition = fragPositionInLightSpace.xyz / fragPositionInLightSpace.w; //[-1,1]
-    lightSpacePosition = lightSpacePosition * 0.5f + 0.5f; //[0,1]
 
-    // if not outside of far range
-    if(lightSpacePosition.z <= 1.f + 0.005){
-        float closestDepth = texture(uShadowmap, lightSpacePosition.xy).r;
-        float currentDepth = lightSpacePosition.z;
-        
-        //an object is blocking the light
-        if(currentDepth > closestDepth){
-            shadow = 1.f;
-        }
-    }
+    //if outside of view frustrum dont do anything
+    if(lightSpacePosition.z >= 1.f)
+        return shadow;
+
+    lightSpacePosition = lightSpacePosition * 0.5f + 0.5f; //[0,1]
+    float currentDepth = lightSpacePosition.z;
+    float bias = max(0.025f * (1.0f - dot(normalize(vNormal), uLightDirection)), 0.005f); //the more front facing towards light, the more bias. reduces shadow acne
+
+	// smoother shadows using PCF
+	int radius = 2;
+    float totalSamples = 0.f;
+
+	vec2 texelSize = 1.0 / textureSize(uShadowmap, 0);
+	for(int x = -radius; x <= radius;x++){
+		for(int y = -radius; y <= radius; y++){
+            vec2 offset = vec2(x, y) * texelSize;
+            float closestDepth = texture(uShadowmap, lightSpacePosition.xy + offset).r;
+
+			if (currentDepth > closestDepth + bias){
+				shadow += 1.f;     
+            }
+            totalSamples++;
+		}    
+	}
+	//average shadow
+	shadow /= totalSamples;
     return shadow;
 }
 
@@ -90,7 +105,7 @@ void main() {
     //diffuse calculations
     float diffuseFactor = max(dot(unitNormal, uLightDirection), 0.f); //the more front facing towards light, the brighter
 	vec3 diffuse = lightColor * diffuseFactor * uLightIntensity * (1.f - shadow);
-    
+
     //specular calculations using phong model
     vec3 viewDirection = normalize(uCameraPosition - vPosition); 
     vec3 reflectDirection = reflect(-uLightDirection, unitNormal);  

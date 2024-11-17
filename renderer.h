@@ -2,7 +2,9 @@
 #include <string>
 #include "display.h"
 #include "terrain.h"
+#include "cubemap.h"
 #include "shader_handlers/terrain_shader_handler.h"
+#include "shader_handlers/skybox_shader_handler.h"
 
 class Renderer {
 
@@ -25,6 +27,7 @@ public:
 	void PrepareImGuiFrame();
 	void RenderImGuiFrame();
 	void RenderTerrain(Terrain terrain, TerrainShaderHandler terrainShaderHandler, Shadowmap shadowmap);
+	void RenderSkybox(Cubemap cubemap, SkyboxShaderHandler shader);
 	void Update();
 	void Destroy();
 };

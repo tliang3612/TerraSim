@@ -23,7 +23,7 @@ struct Heightmap {
 	float minHeight = 1;
 
 	// Noise parameters
-	float frequency = .3f;
+	float frequency = .2f;
 	float amplitude = 80.0f;
 
 	Heightmap() = default;
@@ -48,8 +48,8 @@ struct Heightmap {
 
 	void GenerateHeightsUsingNoise(int noiseType) {
 		noise.SetSeed(time(NULL));
-		noise.SetNoiseType(noiseTypeArray[noiseType]);
-		noise.SetFractalOctaves(6);
+		noise.SetNoiseType(noiseTypeArray[1]);
+		noise.SetFractalOctaves(5);
 
 		//Init heightmap with noise values
 		for (int i = 0; i < heightmapResolution; i++) {
@@ -57,24 +57,23 @@ struct Heightmap {
 				float x = float(i) / float(heightmapResolution - 1) * 2.0f - 1.0f;
 				float y = float(j) / float(heightmapResolution - 1) * 2.0f - 1.0f;
 
-				int octaves = 5;
-				float gain = 0.6f; 
-				float lacunarity = 2.0f;
-				float baseHeight = fBm(glm::vec2(x,y), octaves, gain, lacunarity);
+				//int octaves = 5;
+				//float gain = 0.6f; 
+				//float lacunarity = 2.0f;
+				//float baseHeight = fBm(glm::vec2(x,y), octaves, gain, lacunarity);
 
-				float perlinNoise = baseHeight;
-				float billowNoise = abs(perlinNoise);
-				float ridgeNoise = 1.0f - billowNoise;
+				//float perlinNoise = baseHeight;
+				//float billowNoise = abs(perlinNoise);
+				//float ridgeNoise = 1.0f - billowNoise;
 
-				float Ss = -.5f;
-				float Se = 5.f;
-				float Sh = 10.0f;				
-				float combinedNoise = (Ss >= 0.0f) ? glm::mix(perlinNoise, billowNoise, abs(Ss)) : glm::mix(perlinNoise, ridgeNoise, Ss);
+				//float Ss = -.5f;
+				//float Se = .5f;
+				//float Sh = 30.0f;				
+				//float combinedNoise = (Ss >= 0.0f) ? glm::mix(perlinNoise, billowNoise, abs(Ss)) : glm::mix(perlinNoise, ridgeNoise, Ss);
 
-				float height = combinedNoise * 30.f; //* pow(abs(combinedNoise), Se) * Sh;
-
-
-				map[j * heightmapResolution + i] = height; //SampleNoise(x * heightmapSize * frequency, y * heightmapSize * frequency) * 80.f;
+				//float height = combinedNoise * pow(abs(combinedNoise), Se) * Sh;
+				float height = SampleNoise(x * frequency, y * frequency) * amplitude;
+				map[j * heightmapResolution + i] = height; 
 				if (map[j * heightmapResolution + i] < minHeight) {
 					minHeight = map[j * heightmapResolution + i];
 				}

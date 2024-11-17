@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="camera.cpp" />
+    <ClCompile Include="cubemap.cpp" />
     <ClCompile Include="Dependencies\libs\FastNoise\FastNoise.cpp" />
     <ClCompile Include="Dependencies\libs\glad\glad.c" />
     <ClCompile Include="Dependencies\libs\glm\detail\glm.cpp" />
@@ -163,6 +164,7 @@
     <ClCompile Include="renderer.cpp" />
     <ClCompile Include="shader_handlers\shader_handler.cpp" />
     <ClCompile Include="shader_handlers\shadowmap_shader_handler.cpp" />
+    <ClCompile Include="shader_handlers\skybox_shader_handler.cpp" />
     <ClCompile Include="shader_handlers\terrain_shader_handler.cpp" />
     <ClCompile Include="terrain.cpp" />
     <ClCompile Include="TerraSim.cpp" />
@@ -171,6 +173,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
+    <ClInclude Include="cubemap.h" />
     <ClInclude Include="Dependencies\libs\FastNoise\FastNoise.h" />
     <ClInclude Include="Dependencies\libs\glad\glad.h" />
     <ClInclude Include="Dependencies\libs\glad\khrplatform.h" />
@@ -536,6 +539,7 @@
     <ClInclude Include="sculptor.hpp" />
     <ClInclude Include="shader_handlers\shader_handler.h" />
     <ClInclude Include="shader_handlers\shadowmap_shader_handler.h" />
+    <ClInclude Include="shader_handlers\skybox_shader_handler.h" />
     <ClInclude Include="shader_handlers\terrain_shader_handler.h" />
     <ClInclude Include="shadowmap.hpp" />
     <ClInclude Include="terrain.h" />
@@ -683,6 +687,8 @@
     <None Include="SDL2.dll" />
     <None Include="shaders\shadowmap.fs" />
     <None Include="shaders\shadowmap.vs" />
+    <None Include="shaders\skybox.fs" />
+    <None Include="shaders\skybox.vs" />
     <None Include="shaders\terrain.fs" />
     <None Include="shaders\terrain.vs" />
   </ItemGroup>

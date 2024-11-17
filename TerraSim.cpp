@@ -11,6 +11,7 @@
 #include "data_factory.h"
 #include "shader_handlers/terrain_shader_handler.h"
 #include "shader_handlers/shadowmap_shader_handler.h"
+#include "shader_handlers/skybox_shader_handler.h"
 #include "camera.h"
 #include "sculptor.hpp"
 #include "raycaster.hpp"
@@ -33,17 +34,18 @@ int main()
 	//init shaders
 	TerrainShaderHandler terrainShaderHandler = TerrainShaderHandler();
 	ShadowmapShaderHandler shadowmapShaderHandler = ShadowmapShaderHandler();
+	SkyboxShaderHandler skyboxShaderHandler = SkyboxShaderHandler();
 	DataFactory dataFactory = DataFactory();
 
 	//user inputs to move camera
-	bool keyW = false, keyA = false, keyS = false, keyD = false, keyZ = false, keyX = false;
+	bool keyW = false, keyA = false, keyS = false, keyD = false, keyQ = false, keyE = false;
 	bool keyLeftShift = false, keyRightShift = false;
 	float mouseDragX = 0.f, mouseDragY = displayHeight;
 	int mouseX = 0.f, mouseY = 0.f;
 	bool mouseLeft = false, mouseRight = false;
-	float sculptRadius = 100.f;
+	float sculptRadius = 50.f;
 	
-	Light light(glm::vec3(0.f, 1.f, 0.f), glm::vec3(100000.f, 150000.f, 0.f), .8f);
+	Light light(glm::vec3(0.f, 1.f, 0.f), glm::vec3(100000.f, 100000.f, 100000.f), .8f);
 
 	//load the textures
 	GLuint textureID1 = dataFactory.LoadTexture("resources/Base.png");
@@ -54,10 +56,23 @@ int main()
 
 
 	std::vector<GLuint> textureIDs = { textureID1, textureID2, textureID3, textureID4 };
+	GLuint skyboxTextureID = dataFactory.LoadCubemapTexture({
+		"resources/skybox/right.png",
+		"resources/skybox/left.png",
+		"resources/skybox/top.png",
+		"resources/skybox/bottom.png",
+		"resources/skybox/back.png",
+		"resources/skybox/front.png"
+		});
+	
 
 	//Terrain logic
 	TerrainFactory terrainFactory = TerrainFactory();
-	Terrain terrain = terrainFactory.GenerateTerrain(dataFactory, 512, 1024, textureIDs);
+	Terrain terrain = terrainFactory.GenerateTerrain(dataFactory, 256, 512, textureIDs);
+
+	//Skybox logic
+	CubemapFactory cubemapFactory = CubemapFactory();
+	Cubemap skybox = cubemapFactory.GenerateCubemap(dataFactory, skyboxTextureID);
 
 	//for shadowmap
 	static bool shadowmapDirty = true;
@@ -91,8 +106,8 @@ int main()
 				if (key == SDLK_a) keyA = keyDown;
 				if (key == SDLK_s) keyS = keyDown;
 				if (key == SDLK_d) keyD = keyDown;
-				if (key == SDLK_z) keyZ = keyDown;
-				if (key == SDLK_x) keyX = keyDown;
+				if (key == SDLK_q) keyQ = keyDown;
+				if (key == SDLK_e) keyE = keyDown;
 				if (key == SDLK_LSHIFT) keyLeftShift = keyDown;
 			}
 			else if (e.type == SDL_MOUSEBUTTONDOWN) {
@@ -106,7 +121,7 @@ int main()
 				else if (button == SDL_BUTTON_RIGHT) mouseRight = false;
 			}
 			else if (e.type == SDL_MOUSEWHEEL) {
-				float incrementVal = 175.f * deltaTime;
+				float incrementVal = 200.f * deltaTime;
 				if (e.wheel.y > 0) {
 					sculptRadius += incrementVal;
 				}
@@ -124,18 +139,28 @@ int main()
 			}
 		}
 
-		camera.Update(deltaTime, keyW, keyA, keyS, keyD, keyZ, keyX, keyLeftShift, mouseDragX, mouseDragY, displayWidth, displayHeight);	
+		camera.Update(deltaTime, keyW, keyA, keyS, keyD, keyQ, keyE, keyLeftShift, mouseDragX, mouseDragY, displayWidth, displayHeight);	
 
 		Shadowmap shadowmap = terrain.GetShadowmap();
+
+		//set uniform variables
+
+		//shadowmap
+
+		//terrain
+		glm::mat4 projectionMatrix = renderer.GetProjectionMatrix();
+		glm::mat4 viewMatrix = camera.GetViewMatrix();
+
 		//render terrain to shadowmap if light has moved (shadowmapDirty)
 		if(shadowmapDirty) {
+			shadowmap.BindFrameBuffer();		
 			glm::mat4 lightProjectionMatrix = light.GetProjectionMatrix();
 			glm::mat4 lightViewMatrix = light.GetViewMatrix();
 			shadowmapShaderHandler.Enable();
 			shadowmapShaderHandler.SetLightViewProjection(lightProjectionMatrix * lightViewMatrix);
 			shadowmapShaderHandler.Disable();
 
-			shadowmap.BindFrameBuffer();
+			renderer.RenderSkybox(skybox, skyboxShaderHandler);
 			renderer.RenderTerrain(terrain, terrainShaderHandler, shadowmap);
 			shadowmap.UnbindFrameBuffer();
 			shadowmapDirty = false;
@@ -144,25 +169,25 @@ int main()
 		// prepare the next main frame for rendering
 		renderer.PrepareFrame();
 
-		glm::mat4 projectionMatrix = renderer.GetProjectionMatrix();
-		glm::mat4 viewMatrix = camera.GetViewMatrix();
-
 		//Main Render Logic
-		{
-			glm::vec4 clip = glm::vec4(0.0f); 
-			terrainShaderHandler.Enable();
-			terrainShaderHandler.SetMinHeight(terrain.GetMinHeight());
-			terrainShaderHandler.SetMaxHeight(terrain.GetMaxHeight());
-			terrainShaderHandler.SetViewProjection(projectionMatrix * viewMatrix);
-			terrainShaderHandler.SetLightDirection(light.lightDirection);
-			terrainShaderHandler.SetLightIntensity(light.lightIntensity);
-			terrainShaderHandler.SetCameraPosition(camera.position);
-			terrainShaderHandler.SetTextureScale(texScaleVal);
-			terrainShaderHandler.SetClip(clip);
-			renderer.RenderTerrain(terrain, terrainShaderHandler, shadowmap);
+		skyboxShaderHandler.Enable();
+		skyboxShaderHandler.SetViewProjection(projectionMatrix * glm::mat4(glm::mat3(viewMatrix)));
+		skyboxShaderHandler.SetLightDirection(light.lightDirection);
+		renderer.RenderSkybox(skybox, skyboxShaderHandler);
+		skyboxShaderHandler.Disable();
 
-			terrainShaderHandler.Disable();
-		}
+		glm::vec4 clip = glm::vec4(0.0f);
+		terrainShaderHandler.Enable();
+		terrainShaderHandler.SetMinHeight(terrain.GetMinHeight());
+		terrainShaderHandler.SetMaxHeight(terrain.GetMaxHeight());
+		terrainShaderHandler.SetViewProjection(projectionMatrix * viewMatrix);
+		terrainShaderHandler.SetLightDirection(light.lightDirection);
+		terrainShaderHandler.SetLightIntensity(light.lightIntensity);
+		terrainShaderHandler.SetCameraPosition(camera.position);
+		terrainShaderHandler.SetTextureScale(texScaleVal);
+		terrainShaderHandler.SetClip(clip);
+		renderer.RenderTerrain(terrain, terrainShaderHandler, shadowmap);
+		terrainShaderHandler.Disable();
 
 		//frames are moving too fast. pause until desired time 
 		if (deltaTime < targetFrameTime) {

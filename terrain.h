@@ -34,5 +34,5 @@ class TerrainFactory {
 public:
 	TerrainFactory() = default;
 
-	Terrain GenerateTerrain(DataFactory modelFactory, float size, int resolution, std::vector<GLuint> textureIDs);
+	Terrain GenerateTerrain(DataFactory dataFactory, float size, int resolution, std::vector<GLuint> textureIDs);
 };

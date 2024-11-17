@@ -15,6 +15,8 @@ struct Model {
 	}
 };
 
+
+
 class DataFactory {
 public:
 	GLuint CreateVAO();
@@ -25,6 +27,7 @@ public:
 	Model CreateModel(float* vertices, float* textures, int vertexCount);
 	Model CreateModelWithoutTextures(float* vertices, int vertexCount);
 	GLuint LoadTexture(std::string texturePath);
+	GLuint LoadCubemapTexture(std::vector<std::string> texturePaths);
 	void DeleteDataObjects();
 
 private: 
@@ -34,6 +37,8 @@ private:
 	std::vector<GLuint> m_textureList;
 
 };
+
+
 
 
 

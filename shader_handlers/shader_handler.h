@@ -19,6 +19,7 @@ public:
 	void SetUniformVec4(GLuint location, glm::vec4& value);
 	void SetUniformMatrix4(GLuint location, glm::mat4& value);
 	void SetUniformSampler2D(GLuint location, GLenum texture, GLuint textureID);
+	void SetUniformSamplerCube(GLuint location, GLenum texture, GLuint cubemapTextureID);
 	void BindAttribute(int attribute, std::string variableName);
 
 
