@@ -2,13 +2,18 @@ struct Light {
 
 	glm::vec3 lightPosition;
 	glm::vec3 lightDirection;
-	float lightIntensity;
+	float brightness;
+	float sunFalloff;
+	float sunIntensity;
 
 	Light() = default;
 
-	Light(glm::vec3 lightPosition, glm::vec3 lightDirection, float lightIntensity) {
+	Light(glm::vec3 lightPosition, glm::vec3 lightDirection, float lightIntensity, float sunFalloff, float sunIntensity) {
 		this->lightPosition = lightPosition;
 		this->lightDirection = lightDirection;
+		this->brightness = lightIntensity;
+		this->sunFalloff = sunFalloff;
+		this->sunIntensity = sunIntensity;
 	}
 
 	glm::mat4 GetViewMatrix() {

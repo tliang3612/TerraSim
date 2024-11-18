@@ -19,9 +19,11 @@ TerrainShaderHandler::TerrainShaderHandler() {
     uPeaksTexture = GetUniformLocation("uPeaksTexture");
     uHeightmap = GetUniformLocation("uHeightmap");
     uShadowmap = GetUniformLocation("uShadowmap");
+    uSunFalloff = GetUniformLocation("uSunFalloff");
+    uSunIntensity = GetUniformLocation("uSunIntensity");
     uLightViewProjection = GetUniformLocation("uLightViewProjection");
     uCameraPosition = GetUniformLocation("uCameraPosition");
-    uLightIntensity = GetUniformLocation("uLightIntensity");
+    uBrightness = GetUniformLocation("uBrightness");
     uTextureScale = GetUniformLocation("uTextureScale");
     BindAttribute(0, "iPosition");
     BindAttribute(1, "iTexture");
@@ -58,12 +60,20 @@ void TerrainShaderHandler::SetLightViewProjection(glm::mat4 lightViewProjection)
     SetUniformMatrix4(uLightViewProjection, lightViewProjection);
 }
 
-void TerrainShaderHandler::SetLightIntensity(float lightIntensity) {
-    SetUniformFloat(uLightIntensity, lightIntensity);
+void TerrainShaderHandler::SetBrightness(float brightness) {
+    SetUniformFloat(uBrightness, brightness);
 }
 
 void TerrainShaderHandler::SetTextureScale(float textureScale){
     SetUniformFloat(uTextureScale, textureScale);
+}
+
+void TerrainShaderHandler::SetSunFalloff(float sunFalloff){
+    SetUniformFloat(uSunFalloff, sunFalloff);
+}
+
+void TerrainShaderHandler::SetSunIntensity(float sunIntensity){
+    SetUniformFloat(uSunIntensity, sunIntensity);
 }
 
 void TerrainShaderHandler::SetCameraPosition(glm::vec3 cameraPosition){

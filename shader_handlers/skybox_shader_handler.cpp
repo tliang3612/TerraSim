@@ -9,6 +9,8 @@ SkyboxShaderHandler::SkyboxShaderHandler() {
     uViewProjection = GetUniformLocation("uViewProjection");
     uCubemap = GetUniformLocation("uCubemap");
     uLightDirection = GetUniformLocation("uLightDirection");
+    uSunFalloff = GetUniformLocation("uSunFalloff");
+    uSunIntensity = GetUniformLocation("uSunIntensity");
     BindAttribute(0, "iPosition");
 }
 
@@ -19,3 +21,12 @@ void SkyboxShaderHandler::SetViewProjection(glm::mat4 viewProjection) {
 void SkyboxShaderHandler::SetLightDirection(glm::vec3 lightDirection) {
     SetUniformVec3(uLightDirection, lightDirection);
 }
+
+void SkyboxShaderHandler::SetSunFalloff(float sunFalloff) {
+    SetUniformFloat(uSunFalloff, sunFalloff);
+}
+
+void SkyboxShaderHandler::SetSunIntensity(float sunIntensity) {
+    SetUniformFloat(uSunIntensity, sunIntensity);
+}
+

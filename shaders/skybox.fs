@@ -7,19 +7,20 @@ out vec4 oFragColor;
 uniform samplerCube uCubemap;
 uniform vec3 uLightDirection;
 
+uniform float uSunFalloff;   
+uniform float uSunIntensity;
+
 void main() {
-    float sunFalloff = 20.f;     
-    float sunIntensity = .5f;   
-    vec3 lightColor = vec3(1.0, 0.9, 0.7); 
+    vec3 sunlightColor = vec3(1.f, 0.9f, 0.7f); 
 
     float diffuse = max(dot(normalize(vPosition), normalize(uLightDirection)), 0.0f); //diffuse calculations
 
-    float sunHighlight = pow(diffuse, sunFalloff); 
-    sunHighlight = smoothstep(0.0, 0.5, sunHighlight); 
+    float sunHighlight = pow(diffuse, uSunFalloff); 
+    sunHighlight = smoothstep(0.f, 0.5f, sunHighlight); 
 
-    vec3 sunColor = lightColor * sunHighlight * sunIntensity;
+    vec3 sunColor = sunlightColor * sunHighlight * uSunIntensity;
 
     vec3 skyboxColor = texture(uCubemap, normalize(vPosition)).rgb;
 
-    oFragColor = vec4(skyboxColor + sunColor, 1.0); //Add sun effect to the skybox
+    oFragColor = vec4(skyboxColor + sunColor, 1.f); //Add sun effect to the skybox
 }

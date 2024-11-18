@@ -7,7 +7,7 @@ in vec3 vColor;      // Color passed from the vertex shader (grayscale from heig
 in vec3 vNormal;	// Calculated surface normal from the vertex shader
 
 uniform vec3 uLightDirection; // Light direction. changes according to user input
-uniform float uLightIntensity;
+uniform float uBrightness;
 uniform mat4 uLightViewProjection;
 uniform vec3 uCameraPosition;
 
@@ -16,6 +16,9 @@ uniform float uMaxHeight;
 
 uniform vec2 uIndicatorPosition;
 uniform float uIndicatorRadius;
+
+uniform float uSunFalloff;   
+uniform float uSunIntensity;
 
 uniform float uTextureScale;
 uniform sampler2D uBaseTexture;
@@ -44,18 +47,18 @@ vec3 BlendTextures(vec2 texScale){
     float normalizedMinHeight = clamp((vPosition.y - uMinHeight) / (threshold - uMinHeight + epsilon), 0.0f, 1.0f); //[0, 1]
 
     // blend rock color with base
-    float rockFactor = smoothstep(0.2, 1.0, normalizedMinHeight); 
+    float rockFactor = smoothstep(0.2f, 1.f, normalizedMinHeight); 
     vec3 currentColor = mix(baseColor, rockColor, normalizedMinHeight); //once position reaches threshold, rockColor takes over
 
-    vec3 upVector = vec3(0.0f, 1.0f, 0.0f);
+    vec3 upVector = vec3(0.f, 1.f, 0.f);
     float slopeFactor = smoothstep(.5f, 1.f, dot(unitNormal, upVector)); //slope 
     float minHeightFactor = smoothstep(.6f, 1.f, normalizedMinHeight) * slopeFactor; //closer to minHeight, lower the value
-    float maxHeightFactor = smoothstep(0.1f, .6f, 1.0f - normalizedMaxHeight) * slopeFactor; //further away from maxheight, higher the value
+    float maxHeightFactor = smoothstep(0.1f, .6f, 1.f - normalizedMaxHeight) * slopeFactor; //further away from maxheight, higher the value
     float groundFactor = min(minHeightFactor, maxHeightFactor);
     currentColor = mix(currentColor, groundColor, groundFactor);
 
     // blend current color with peaks
-    float peaksFactor = smoothstep(0.7f, 1.0f, normalizedMaxHeight); //rapidly increase bias as position reaches higher
+    float peaksFactor = smoothstep(0.7f, 1.f, normalizedMaxHeight); //rapidly increase bias as position reaches higher
     currentColor = mix(currentColor, peaksColor, peaksFactor);
 
     return currentColor;
@@ -98,13 +101,17 @@ float CalculateShadow(){
 
 void main() {
 	vec3 unitNormal = normalize(vNormal); // Must normalize for dot product math calculation things
-    vec3 lightColor = vec3(1.f, 1.f,1.f);
+    vec3 lightColor = vec3(1.0, 0.9, 0.7); 
     vec3 ambient = lightColor * 0.3f;
     float shadow = CalculateShadow();
 
     //diffuse calculations
     float diffuseFactor = max(dot(unitNormal, uLightDirection), 0.f); //the more front facing towards light, the brighter
-	vec3 diffuse = lightColor * diffuseFactor * uLightIntensity * (1.f - shadow);
+	vec3 diffuse = lightColor * diffuseFactor * uBrightness * (1.f - shadow);
+    
+    //sun calculations
+    float sunHighlight = pow(diffuseFactor, uSunFalloff * .25f);
+    vec3 sunlightEffect = lightColor * sunHighlight * uSunIntensity;
 
     //specular calculations using phong model
     vec3 viewDirection = normalize(uCameraPosition - vPosition); 
@@ -118,7 +125,7 @@ void main() {
 	vec2 texScale = vTexture * uTextureScale;
     vec3 textureColor = BlendTextures(texScale);
 
-    oFragColor = vec4(textureColor * (diffuse + ambient + specular), 1.f);
+    oFragColor = vec4(textureColor * (diffuse + ambient + specular + sunlightEffect) , 1.f);
     float distanceFromEdge = abs(length(vPosition.xz - uIndicatorPosition) - uIndicatorRadius);
     if (distanceFromEdge <= 4.f && uIndicatorRadius > 0.f){
         float intensity = smoothstep(4.f, 0.f, distanceFromEdge)*2.2f + 1.f; // Smooth transition for indicator ring to make it not look flat

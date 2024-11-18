@@ -34,6 +34,6 @@ C:\Users\broni\source\repos\TerraSim\TerraSim.cpp(44,27): warning C4244: 'initia
 C:\Users\broni\source\repos\TerraSim\heightmap.hpp(50,21): warning C4244: 'argument': conversion from 'time_t' to 'int', possible loss of data
   (compiling source file 'renderer.cpp')
   
-  skybox_shader_handler.cpp
+  terrain_shader_handler.cpp
   Generating Code...
   TerraSim.vcxproj -> C:\Users\broni\source\repos\TerraSim\x64\Debug\TerraSim.exe

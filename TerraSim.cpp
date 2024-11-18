@@ -45,7 +45,7 @@ int main()
 	bool mouseLeft = false, mouseRight = false;
 	float sculptRadius = 50.f;
 	
-	Light light(glm::vec3(0.f, 1.f, 0.f), glm::vec3(100000.f, 100000.f, 100000.f), .8f);
+	Light light(glm::vec3(0.f, 1.f, 0.f), glm::vec3(100000.f, 100000.f, 100000.f), .8f, 20.f, .5f);
 
 	//load the textures
 	GLuint textureID1 = dataFactory.LoadTexture("resources/Base.png");
@@ -160,7 +160,7 @@ int main()
 			shadowmapShaderHandler.SetLightViewProjection(lightProjectionMatrix * lightViewMatrix);
 			shadowmapShaderHandler.Disable();
 
-			renderer.RenderSkybox(skybox, skyboxShaderHandler);
+			//renderer.RenderSkybox(skybox, skyboxShaderHandler);
 			renderer.RenderTerrain(terrain, terrainShaderHandler, shadowmap);
 			shadowmap.UnbindFrameBuffer();
 			shadowmapDirty = false;
@@ -173,6 +173,8 @@ int main()
 		skyboxShaderHandler.Enable();
 		skyboxShaderHandler.SetViewProjection(projectionMatrix * glm::mat4(glm::mat3(viewMatrix)));
 		skyboxShaderHandler.SetLightDirection(light.lightDirection);
+		skyboxShaderHandler.SetSunFalloff(light.sunFalloff);
+		skyboxShaderHandler.SetSunIntensity(light.sunIntensity);
 		renderer.RenderSkybox(skybox, skyboxShaderHandler);
 		skyboxShaderHandler.Disable();
 
@@ -182,7 +184,9 @@ int main()
 		terrainShaderHandler.SetMaxHeight(terrain.GetMaxHeight());
 		terrainShaderHandler.SetViewProjection(projectionMatrix * viewMatrix);
 		terrainShaderHandler.SetLightDirection(light.lightDirection);
-		terrainShaderHandler.SetLightIntensity(light.lightIntensity);
+		terrainShaderHandler.SetBrightness(light.brightness);
+		terrainShaderHandler.SetSunFalloff(light.sunFalloff);
+		terrainShaderHandler.SetSunIntensity(light.sunIntensity);
 		terrainShaderHandler.SetCameraPosition(camera.position);
 		terrainShaderHandler.SetTextureScale(texScaleVal);
 		terrainShaderHandler.SetClip(clip);
@@ -201,11 +205,16 @@ int main()
 			ImGui::Begin("Light Settings"); {
 				ImGui::PushItemWidth(150);
 				static float azimuthVal = 0.f; //horizontal rotation of light
-				static float altitudeVal = 0.f; //vertical rotation of light
-				static float intensity = 1.f;
+				static float altitudeVal = 83.f; //vertical rotation of light
+				static float brightness = 1.f;
+				static float sunFalloff = 30.f;
+				static float sunIntensity = .3f;
 				ImGui::SliderFloat("Light Azimuth", &azimuthVal, 0.0f, 360.f);
 				ImGui::SliderFloat("Light Altitude", &altitudeVal, 0.0f, 360.f);
-				ImGui::SliderFloat("Light Intensity", &intensity, 0.0f, 1.f); 
+				ImGui::SliderFloat("Brightness", &brightness, 0.0f, 1.f);
+				ImGui::SliderFloat("Sun Falloff", &sunFalloff, 0.01f, 100.f);
+				ImGui::SliderFloat("Sun Intensity", &sunIntensity, 0.0f, 1.f);
+
 
 				float horizontalScaling = std::cos(glm::radians(altitudeVal));
 				float xAngle = std::cos(glm::radians(azimuthVal)) * horizontalScaling;
@@ -218,7 +227,9 @@ int main()
 				}
 
 				light.lightDirection = newLightDirection;
-				light.lightIntensity = intensity;
+				light.brightness = brightness;
+				light.sunFalloff = sunFalloff + 10.f;
+				light.sunIntensity = sunIntensity;
 
 				ImGui::PopItemWidth();
 			}
@@ -355,11 +366,11 @@ int main()
 
 			ImGui::Begin("Debug"); {
 			    static int frameCount = 0; //increment frames
-				float fpsUpdateDeltaTime = static_cast<float>(SDL_GetPerformanceCounter() - fpsCounter) / frequency; //delta time for fps calculations. Needs to be different var because fpsCounter 
+				float fpsElapsedTime = static_cast<float>(SDL_GetPerformanceCounter() - fpsCounter) / frequency; //delta time for fps calculations. Needs to be different var because fpsCounter 
 				//will only update every 0.1s rather than each frame
 				frameCount++; //increment frames
-				if (fpsUpdateDeltaTime > 0.1f) { //update fps every .1s
-					fps = frameCount / fpsUpdateDeltaTime;
+				if (fpsElapsedTime > 0.1f) { //update fps every .1s
+					fps = frameCount / fpsElapsedTime;
 					fpsCounter = currentCounter;
 					frameCount = 0;
 				}

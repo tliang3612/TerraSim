@@ -23,7 +23,9 @@ public:
 	GLuint uShadowmap;
 	GLuint uLightViewProjection;
 	GLuint uCameraPosition;
-	GLuint uLightIntensity;
+	GLuint uSunFalloff;
+	GLuint uSunIntensity;
+	GLuint uBrightness;
 	GLuint uTextureScale;
 
 	void SetClip(glm::vec4 clip);
@@ -35,6 +37,8 @@ public:
 	void SetIndicatorRadius(float indicatorRadius);
 	void SetLightViewProjection(glm::mat4 lightViewProjection);
 	void SetCameraPosition(glm::vec3 cameraPosition);
-	void SetLightIntensity(float lightIntensity);
+	void SetBrightness(float brightness);
 	void SetTextureScale(float textureScale);
+	void SetSunFalloff(float sunFalloff);
+	void SetSunIntensity(float sunIntensity);
 };
