@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <glad/glad.h>
 #include <FastNoise/FastNoise.h>
 #include <glm/glm.hpp>
@@ -7,11 +7,6 @@
 #include "data_factory.h"
 #include <iostream>
 #include <map>
-
-const FastNoise::NoiseType noiseTypeArray[3] = {
-	FastNoise::Perlin,
-	FastNoise::SimplexFractal
-};
 
 struct Heightmap {
 	FastNoise noise;
@@ -23,8 +18,9 @@ struct Heightmap {
 	float minHeight = 1;
 
 	// Noise parameters
-	float frequency = .2f;
-	float amplitude = 80.0f;
+	float amplitude = 80.f;
+	float frequency = .5f;
+
 
 	Heightmap() = default;
 	
@@ -34,7 +30,7 @@ struct Heightmap {
 		this->heightmapSize = size;
 		this->heightmapResolution = resolution;
 		map = new float[heightmapResolution * heightmapResolution]; //using raw pointer for map for simplicity
-		GenerateHeightsUsingNoise(0);
+		GenerateHeightsUsingNoise(0, true);
 
 		textureID = dataFactory.CreateTexture();
 		glBindTexture(GL_TEXTURE_2D, textureID); //make heightmap texture configurable
@@ -46,10 +42,19 @@ struct Heightmap {
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-	void GenerateHeightsUsingNoise(int noiseType) {
-		noise.SetSeed(time(NULL));
-		noise.SetNoiseType(noiseTypeArray[1]);
-		noise.SetFractalOctaves(5);
+	void GenerateHeightsUsingNoise(int noiseType, bool setSeed) {
+
+		if (setSeed) {
+			noise.SetSeed(time(NULL));
+		}
+
+		if (noiseType == 0) {
+			noise.SetNoiseType(FastNoise::SimplexFractal);
+			noise.SetFractalOctaves(5);
+		}
+		else {
+			noise.SetNoiseType(FastNoise::Simplex);
+		}
 
 		//Init heightmap with noise values
 		for (int i = 0; i < heightmapResolution; i++) {
@@ -57,22 +62,15 @@ struct Heightmap {
 				float x = float(i) / float(heightmapResolution - 1) * 2.0f - 1.0f;
 				float y = float(j) / float(heightmapResolution - 1) * 2.0f - 1.0f;
 
-				//int octaves = 5;
-				//float gain = 0.6f; 
-				//float lacunarity = 2.0f;
-				//float baseHeight = fBm(glm::vec2(x,y), octaves, gain, lacunarity);
+				float height = 0.f;
 
-				//float perlinNoise = baseHeight;
-				//float billowNoise = abs(perlinNoise);
-				//float ridgeNoise = 1.0f - billowNoise;
-
-				//float Ss = -.5f;
-				//float Se = .5f;
-				//float Sh = 30.0f;				
-				//float combinedNoise = (Ss >= 0.0f) ? glm::mix(perlinNoise, billowNoise, abs(Ss)) : glm::mix(perlinNoise, ridgeNoise, Ss);
-
-				//float height = combinedNoise * pow(abs(combinedNoise), Se) * Sh;
-				float height = SampleNoise(x * frequency, y * frequency) * amplitude;
+				if (noiseType == 0) {
+					height = SampleNoise(x * frequency, y * frequency) * amplitude;
+				}
+				else {
+					height = fBm(glm::vec2(x, y)) * amplitude;
+				}
+				
 				map[j * heightmapResolution + i] = height; 
 				if (map[j * heightmapResolution + i] < minHeight) {
 					minHeight = map[j * heightmapResolution + i];
@@ -84,19 +82,44 @@ struct Heightmap {
 		}
 	}
 
-	float fBm(glm::vec2 p, int octaves, float gain, float lacunarity) {
-		float amplitude = 1.f;
-		float frequency = 0.5f;
-		float sum = 0.0;
+	float fBm(glm::vec2 position) {
+		//fbm params
+		const int octaves = 5;           
+		const float lacunarity = 1.9f;    
+		const float gain = 0.5f;          
 
-		for (int i = 0; i < octaves; ++i) {
-			sum += amplitude * SampleNoise(p.x * frequency, p.y * frequency);
-			amplitude *= gain;      
-			frequency *= lacunarity;
+		float accumulatedNoise = 0.0f;  
+		float amplitude = 0.5f;
+		float freq = frequency;
+		float prev = 1.0f; //previous noise val
+
+		for (int i = 0; i < octaves; i++) {
+			float noise = SampleNoise(position.x * freq, position.y * freq);
+
+			float ridgeNoise = 1.f - std::abs(noise);
+
+			//smoothing functions for valleys and peaks
+			if (ridgeNoise < .5f) {
+				ridgeNoise = 4.f * glm::pow(ridgeNoise, 3); //valleys 
+			}
+			else {
+				ridgeNoise = (ridgeNoise - 1.f) * glm::pow((2.f * ridgeNoise - 2.f), 2) + 1.f; //peaks 
+			}
+
+			accumulatedNoise += ridgeNoise * amplitude * prev;
+
+			prev = ridgeNoise;
+
+			//adjust for next octave
+			freq *= lacunarity; 
+			amplitude *= gain;  
 		}
-
-		return sum;
+		float maxDistance = std::sqrt(2.f);
+		float distance = glm::length(position);
+		float falloff = glm::clamp(1.f - distance / maxDistance, 0.f, 1.f); // create a mountain ranges more towards the middle
+		return accumulatedNoise * falloff;
 	}
+
 
 	float SampleNoise(float x, float y)
 	{

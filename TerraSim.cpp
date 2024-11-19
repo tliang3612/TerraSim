@@ -52,7 +52,7 @@ int main()
 	GLuint textureID2 = dataFactory.LoadTexture("resources/Ground.png");
 	GLuint textureID3 = dataFactory.LoadTexture("resources/Rock.png");
 	GLuint textureID4 = dataFactory.LoadTexture("resources/Peaks.png");
-	static float texScaleVal = 100.f;
+	static float texScaleVal = 50.f;
 
 
 	std::vector<GLuint> textureIDs = { textureID1, textureID2, textureID3, textureID4 };
@@ -169,7 +169,7 @@ int main()
 		// prepare the next main frame for rendering
 		renderer.PrepareFrame();
 
-		//Main Render Logic
+		//lighting pass
 		skyboxShaderHandler.Enable();
 		skyboxShaderHandler.SetViewProjection(projectionMatrix * glm::mat4(glm::mat3(viewMatrix)));
 		skyboxShaderHandler.SetLightDirection(light.lightDirection);
@@ -205,7 +205,7 @@ int main()
 			ImGui::Begin("Light Settings"); {
 				ImGui::PushItemWidth(150);
 				static float azimuthVal = 0.f; //horizontal rotation of light
-				static float altitudeVal = 83.f; //vertical rotation of light
+				static float altitudeVal = 30.f; //vertical rotation of light
 				static float brightness = 1.f;
 				static float sunFalloff = 30.f;
 				static float sunIntensity = .3f;
@@ -238,21 +238,35 @@ int main()
 			ImGui::Begin("Terrain Generation Settings"); {
 				ImGui::PushItemWidth(150);
 				static const char* noiseTypes[] = {
-					"Perlin",
-					"Simplex"
+					"Simplex Fractal",
+					"fBm Mountain Range"
 				};
 				static int noiseType = 0;
 				ImGui::Combo("Noise Type", &noiseType, noiseTypes, sizeof(noiseTypes) / sizeof(noiseTypes[0]));
 
-				static float amplitude = 100.f;
-				ImGui::SliderFloat("Amplitude", &amplitude, 0.0f, 200.0f);
+				static float amplitude = 50.f;
+				static float frequency = .5f;
 
-				if(ImGui::Button("Generate Terrain")){
+				bool amplitudeChanged = ImGui::SliderFloat("Amplitude", &amplitude, 0.0f, 100.0f);
+				bool frequencyChanged = ImGui::SliderFloat("frequency", &frequency, 0.0f, 1.0f);
+
+
+				if (amplitudeChanged || frequencyChanged) {
 					Heightmap map = terrain.GetHeightmap();
 					map.amplitude = amplitude;
-					map.GenerateHeightsUsingNoise(noiseType);
+					map.frequency = frequency;
+					map.GenerateHeightsUsingNoise(noiseType, false);
 					map.Update();
 				}
+
+				if (ImGui::Button("Generate Terrain")) {
+					Heightmap map = terrain.GetHeightmap();
+					map.amplitude = amplitude;
+					map.frequency = frequency;
+					map.GenerateHeightsUsingNoise(noiseType, true);
+					map.Update();
+				}
+
 
 				ImGui::PopItemWidth();
 			}
@@ -294,6 +308,10 @@ int main()
 								Sculptor::Sculpt(terrain.GetHeightmap(), intersectionPoint.x, intersectionPoint.z, sculptRadius, strength * 90.f * deltaTime, brushType);
 								terrain.Update();
 							}
+							else if (mouseRight) {
+								Sculptor::Sculpt(terrain.GetHeightmap(), intersectionPoint.x, intersectionPoint.z, sculptRadius, -strength * 90.f * deltaTime, brushType);
+								terrain.Update();
+							}
 						}
 					}
 				}
@@ -311,6 +329,7 @@ int main()
 				ImGui::PushItemWidth(150);
 
 				ImGui::Button("Export to .obj");
+
 
 				ImGui::PopItemWidth();
 			}

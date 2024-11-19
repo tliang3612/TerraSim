@@ -76,7 +76,7 @@ float CalculateShadow(){
 
     lightSpacePosition = lightSpacePosition * 0.5f + 0.5f; //[0,1]
     float currentDepth = lightSpacePosition.z;
-    float bias = max(0.025f * (1.0f - dot(normalize(vNormal), uLightDirection)), 0.005f); //the more front facing towards light, the more bias. reduces shadow acne
+    float bias = max(0.025f * (1.0f - dot(normalize(vNormal), uLightDirection)), 0.001f); //the more front facing towards light, the more bias. reduces shadow acne
 
 	// smoother shadows using PCF
 	int radius = 2;
@@ -113,19 +113,11 @@ void main() {
     float sunHighlight = pow(diffuseFactor, uSunFalloff * .25f);
     vec3 sunlightEffect = lightColor * sunHighlight * uSunIntensity;
 
-    //specular calculations using phong model
-    vec3 viewDirection = normalize(uCameraPosition - vPosition); 
-    vec3 reflectDirection = reflect(-uLightDirection, unitNormal);  
-    float shininess = 5.f;
-    float specularStrength = 0.1f; 
-    float specularFactor = pow(max(dot(viewDirection, reflectDirection), 0.f), shininess); //the more front facing the camera is to the reflection, the shinier
-    vec3 specular = lightColor * specularStrength * specularFactor * (1.f - shadow);
-
     //calculate texture color
 	vec2 texScale = vTexture * uTextureScale;
     vec3 textureColor = BlendTextures(texScale);
 
-    oFragColor = vec4(textureColor * (diffuse + ambient + specular + sunlightEffect) , 1.f);
+    oFragColor = vec4(textureColor * (diffuse + ambient + sunlightEffect) , 1.f);
     float distanceFromEdge = abs(length(vPosition.xz - uIndicatorPosition) - uIndicatorRadius);
     if (distanceFromEdge <= 4.f && uIndicatorRadius > 0.f){
         float intensity = smoothstep(4.f, 0.f, distanceFromEdge)*2.2f + 1.f; // Smooth transition for indicator ring to make it not look flat
