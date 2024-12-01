@@ -15,18 +15,18 @@ SkyboxShaderHandler::SkyboxShaderHandler() {
 }
 
 void SkyboxShaderHandler::SetViewProjection(glm::mat4 viewProjection) {
-    SetUniformMatrix4(uViewProjection, viewProjection);
+    LoadUniformMatrix4(uViewProjection, viewProjection);
 }
 
 void SkyboxShaderHandler::SetLightDirection(glm::vec3 lightDirection) {
-    SetUniformVec3(uLightDirection, lightDirection);
+    LoadUniformVec3(uLightDirection, lightDirection);
 }
 
 void SkyboxShaderHandler::SetSunFalloff(float sunFalloff) {
-    SetUniformFloat(uSunFalloff, sunFalloff);
+    LoadUniformFloat(uSunFalloff, sunFalloff);
 }
 
 void SkyboxShaderHandler::SetSunIntensity(float sunIntensity) {
-    SetUniformFloat(uSunIntensity, sunIntensity);
+    LoadUniformFloat(uSunIntensity, sunIntensity);
 }
 

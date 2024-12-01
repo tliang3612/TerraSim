@@ -1,8 +1,8 @@
-#version 150
+#version 400 core
 
 // Input from the vertex shader
 in vec3 vPosition;   // World position of the fragment
-in vec2 vTexture;    // Texture coordinates
+in vec2 vTextureCoords;    // Texture coordinates
 in vec3 vColor;      // Color passed from the vertex shader (grayscale from heightmap)
 in vec3 vNormal;	// Calculated surface normal from the vertex shader
 
@@ -33,32 +33,31 @@ uniform sampler2D uShadowmap;
 out vec4 oFragColor;
 
 // Blend all textures together. some textures will be more prominent than others in certain heights
-vec3 BlendTextures(vec2 texScale){
+vec3 BlendTextures(){
     vec3 unitNormal = normalize(vNormal);
-
-    vec3 baseColor = texture(uBaseTexture, texScale).rgb;
-    vec3 groundColor = texture(uGroundTexture, texScale).rgb;
-    vec3 rockColor = texture(uRockTexture, texScale).rgb;
-    vec3 peaksColor = texture(uPeaksTexture, texScale).rgb;
+    vec3 baseColor = texture(uBaseTexture, vTextureCoords).rgb;
+    vec3 groundColor = texture(uGroundTexture, vTextureCoords).rgb;
+    vec3 rockColor = texture(uRockTexture, vTextureCoords).rgb;
+    vec3 peaksColor = texture(uPeaksTexture, vTextureCoords).rgb;
     
     float epsilon = 0.0001f; // remove divide by 0 case
-    float threshold = uMinHeight + .4f * (uMaxHeight - uMinHeight); //add 40% of maxheight to minheight
-    float normalizedMaxHeight = clamp((vPosition.y + uMaxHeight) / (2.0 * uMaxHeight), 0.0, 1.0);
-    float normalizedMinHeight = clamp((vPosition.y - uMinHeight) / (threshold - uMinHeight + epsilon), 0.0f, 1.0f); //[0, 1]
+    float threshold = uMinHeight + .5f * (uMaxHeight - uMinHeight); //add % of maxheight to minheight
+    float thresholdToMax = clamp((vPosition.y - threshold) / max(uMaxHeight - threshold, epsilon), 0.f, 1.f); //[threshold, uMaxHeight ] 
+    float minToThreshold = clamp((vPosition.y - uMinHeight)/ max(threshold - uMinHeight, epsilon), 0.f, 1.f); //[uMinHeight, threshold ]
 
     // blend rock color with base
-    float rockFactor = smoothstep(0.2f, 1.f, normalizedMinHeight); 
-    vec3 currentColor = mix(baseColor, rockColor, normalizedMinHeight); //once position reaches threshold, rockColor takes over
+    float rockFactor = smoothstep(0.2f, 1.f, minToThreshold); 
+    vec3 currentColor = mix(baseColor, rockColor, minToThreshold); //once position reaches threshold, rockColor takes over
 
     vec3 upVector = vec3(0.f, 1.f, 0.f);
     float slopeFactor = smoothstep(.5f, 1.f, dot(unitNormal, upVector)); //slope 
-    float minHeightFactor = smoothstep(.6f, 1.f, normalizedMinHeight) * slopeFactor; //closer to minHeight, lower the value
-    float maxHeightFactor = smoothstep(0.1f, .6f, 1.f - normalizedMaxHeight) * slopeFactor; //further away from maxheight, higher the value
-    float groundFactor = min(minHeightFactor, maxHeightFactor);
+    float minHeightFactor = smoothstep(.5f, 1.f, minToThreshold); //closer to minHeight, lower the value
+    float maxHeightFactor = smoothstep(1.f, .3f, thresholdToMax); //closer to maxHeight, lower the value
+    float groundFactor = min(minHeightFactor, maxHeightFactor) * slopeFactor;
     currentColor = mix(currentColor, groundColor, groundFactor);
 
     // blend current color with peaks
-    float peaksFactor = smoothstep(0.7f, 1.f, normalizedMaxHeight); //rapidly increase bias as position reaches higher
+    float peaksFactor = smoothstep(0.7f, 1.f, thresholdToMax); //rapidly increase bias as position reaches higher
     currentColor = mix(currentColor, peaksColor, peaksFactor);
 
     return currentColor;
@@ -114,13 +113,13 @@ void main() {
     vec3 sunlightEffect = lightColor * sunHighlight * uSunIntensity;
 
     //calculate texture color
-	vec2 texScale = vTexture * uTextureScale;
-    vec3 textureColor = BlendTextures(texScale);
+    vec3 textureColor = BlendTextures();
 
-    oFragColor = vec4(textureColor * (diffuse + ambient + sunlightEffect) , 1.f);
+    vec3 totalLighting = max(sunlightEffect + diffuse + ambient, 0.f);
+    oFragColor = vec4(textureColor * totalLighting, 1.f);
     float distanceFromEdge = abs(length(vPosition.xz - uIndicatorPosition) - uIndicatorRadius);
-    if (distanceFromEdge <= 4.f && uIndicatorRadius > 0.f){
-        float intensity = smoothstep(4.f, 0.f, distanceFromEdge)*2.2f + 1.f; // Smooth transition for indicator ring to make it not look flat
+    if (distanceFromEdge <= 3.f && uIndicatorRadius > 0.f){
+        float intensity = smoothstep(3.f, 0.f, distanceFromEdge)*2.2f + 1.f; // Smooth transition for indicator ring to make it not look flat
         oFragColor *= intensity;
     }
 }

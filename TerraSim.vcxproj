@@ -161,15 +161,18 @@
     <ClCompile Include="Dependencies\libs\tinyobjloader\tiny_obj_loader.cc" />
     <ClCompile Include="display.cpp" />
     <ClCompile Include="data_factory.cpp" />
+    <ClCompile Include="heightmap.cpp" />
     <ClCompile Include="renderer.cpp" />
     <ClCompile Include="shader_handlers\shader_handler.cpp" />
     <ClCompile Include="shader_handlers\shadowmap_shader_handler.cpp" />
     <ClCompile Include="shader_handlers\skybox_shader_handler.cpp" />
     <ClCompile Include="shader_handlers\terrain_shader_handler.cpp" />
+    <ClCompile Include="shader_handlers\water_shader_handler.cpp" />
     <ClCompile Include="terrain.cpp" />
     <ClCompile Include="TerraSim.cpp" />
     <ClCompile Include="texture_handler.cpp" />
     <ClCompile Include="util\util.cpp" />
+    <ClCompile Include="water.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
@@ -531,8 +534,8 @@
     <ClInclude Include="Dependencies\SDL2\include\SDL_video.h" />
     <ClInclude Include="Dependencies\SDL2\include\SDL_vulkan.h" />
     <ClInclude Include="display.h" />
-    <ClInclude Include="heightmap.hpp" />
     <ClInclude Include="data_factory.h" />
+    <ClInclude Include="heightmap.h" />
     <ClInclude Include="light.hpp" />
     <ClInclude Include="raycaster.hpp" />
     <ClInclude Include="renderer.h" />
@@ -541,10 +544,12 @@
     <ClInclude Include="shader_handlers\shadowmap_shader_handler.h" />
     <ClInclude Include="shader_handlers\skybox_shader_handler.h" />
     <ClInclude Include="shader_handlers\terrain_shader_handler.h" />
+    <ClInclude Include="shader_handlers\water_shader_handler.h" />
     <ClInclude Include="shadowmap.hpp" />
     <ClInclude Include="terrain.h" />
     <ClInclude Include="texture_handler.h" />
     <ClInclude Include="util\util.h" />
+    <ClInclude Include="water.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Dependencies\libs\glm\detail\func_common.inl" />
@@ -691,6 +696,8 @@
     <None Include="shaders\skybox.vs" />
     <None Include="shaders\terrain.fs" />
     <None Include="shaders\terrain.vs" />
+    <None Include="shaders\water.fs" />
+    <None Include="shaders\water.vs" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="LICENSE.txt" />

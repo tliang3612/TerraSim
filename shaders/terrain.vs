@@ -1,16 +1,17 @@
-#version 150
+#version 400 core
 
 in vec3 iPosition;
-in vec2 iTexture;
+in vec2 iTextureCoords;
 
 out vec3 vPosition;
-out vec2 vTexture;
+out vec2 vTextureCoords;
 out vec3 vColor;
 out vec3 vNormal;
 out vec4 vFragPositionLight;
 
 uniform vec4 uClip;
 uniform mat4 uViewProjection;
+uniform float uTextureScale;
 uniform float uMinHeight;
 uniform float uMaxHeight;
 uniform sampler2D uHeightmap;
@@ -27,9 +28,10 @@ vec3 CalculateSurfaceNormal(vec2 uv) {
 }
 
 void main() {
-	vec4 worldPosition = vec4(iPosition + vec3(0.0f, texture(uHeightmap, iTexture).r, 0.0f), 1.0f);
+	vec4 worldPosition = vec4(iPosition + vec3(0.0f, texture(uHeightmap, iTextureCoords).r, 0.0f), 1.0f);
 	gl_Position =  uViewProjection * worldPosition;
+	gl_ClipDistance[0] = dot(worldPosition, uClip);
 	vPosition = worldPosition.xyz;
-	vTexture = iTexture;
-	vNormal = CalculateSurfaceNormal(iTexture);
+	vTextureCoords = iTextureCoords * uTextureScale;
+	vNormal = CalculateSurfaceNormal(iTextureCoords);
 }

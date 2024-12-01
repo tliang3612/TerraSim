@@ -4,12 +4,14 @@ struct Sculptor {
 
     static void Sculpt(Heightmap& heightmap, float pointX, float pointZ, float radius, float strength, int brushType) {
         float minRadius = radius/3;
+        float heightmapSize = heightmap.GetSize();
+        int heightmapResolution = heightmap.GetResolution();
 
-        float normalizedX = (pointX / heightmap.heightmapSize + 1.0f); //[0, 1]
-        float normalizedZ = (pointZ / heightmap.heightmapSize + 1.0f);
+        float normalizedX = (pointX / heightmapSize + 1.0f); //[0, 1]
+        float normalizedZ = (pointZ / heightmapSize + 1.0f);
 
-        int gridX = int(normalizedX/2.f * heightmap.heightmapResolution);
-        int gridZ = int(normalizedZ/2.f * heightmap.heightmapResolution);
+        int gridX = int(normalizedX/2.f * heightmapResolution);
+        int gridZ = int(normalizedZ/2.f * heightmapResolution);
 
         //calculate ranges to loop iterate through based on radius
         int startX = gridX - radius;
@@ -20,14 +22,14 @@ struct Sculptor {
         //loop through ranges
         for (int z = startZ; z <= endZ; z++) {
             for (int x = startX; x <= endX; x++) {
-                if (x < 0 || x >= heightmap.heightmapResolution ||
-                    z < 0 || z >= heightmap.heightmapResolution) {
+                if (x < 0 || x >= heightmapResolution ||
+                    z < 0 || z >= heightmapResolution) {
                     continue;
                 }
 
                 //revert to world coords
-                float worldX = ((float(x) / heightmap.heightmapResolution) * 2.f - 1.f) * heightmap.heightmapSize;
-                float worldZ = ((float(z) / heightmap.heightmapResolution) * 2.f - 1.f) * heightmap.heightmapSize;
+                float worldX = ((float(x) / heightmapResolution) * 2.f - 1.f) * heightmapSize;
+                float worldZ = ((float(z) / heightmapResolution) * 2.f - 1.f) * heightmapSize;
 
                 //distance between center and current point
                 float distance = std::sqrt((worldX - pointX) * (worldX - pointX) + (worldZ - pointZ) * (worldZ - pointZ));
@@ -52,13 +54,7 @@ struct Sculptor {
                     intensity = Logarithmic(distance, radius, minRadius);
                 }
 
-                heightmap.map[z * heightmap.heightmapResolution + x] += strength * intensity;
-                if (heightmap.map[z * heightmap.heightmapResolution + x] < heightmap.minHeight) {
-                    heightmap.minHeight = heightmap.map[z * heightmap.heightmapResolution + x];
-                }
-                if (heightmap.map[z * heightmap.heightmapResolution + x] > heightmap.maxHeight) {
-                    heightmap.maxHeight = heightmap.map[z * heightmap.heightmapResolution + x];
-                }
+                heightmap.SetHeight(x, z, heightmap.GetHeight(x, z) + strength * intensity);
             }
         }
     }

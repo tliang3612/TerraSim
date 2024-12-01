@@ -23,6 +23,16 @@ glm::mat4 Camera::GetViewMatrix() {
 	return viewMatrix;
 }
 
+glm::mat4 Camera::GetReflectionViewMatrix(float waterHeight){
+	float distance = 2.f * position.y - waterHeight;
+	position.y -= distance;
+	pitch *= -1.f;
+	glm::mat4 reflectionViewMatrix = GetViewMatrix();
+	pitch *= -1.f;
+	position.y += distance;
+	return reflectionViewMatrix;
+}
+
 void Camera::MoveLongitude(float deltaTime, float speed){
 	position.x += glm::sin(-yaw) * speed * deltaTime;
 	position.z += glm::cos(-yaw) * speed * deltaTime;

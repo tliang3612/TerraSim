@@ -3,16 +3,18 @@
 #include "display.h"
 #include "terrain.h"
 #include "cubemap.h"
+#include "water.h"
 #include "shader_handlers/terrain_shader_handler.h"
 #include "shader_handlers/skybox_shader_handler.h"
+#include "shader_handlers/water_shader_handler.h"
 
 class Renderer {
 
 private:
 	Display m_display;
-	const float FOV = 60.0f;
-	const float NEAR_PLANE = 0.5f;
-	const float FAR_PLANE = 5000.0f;
+	const float m_fov = 60.0f;
+	const float m_nearPlane = 1.f;
+	const float m_farPlane = 3000.0f;
 	int m_width;
 	int m_height;
 	glm::mat4 m_projection;
@@ -26,8 +28,9 @@ public:
 	void PrepareFrame();
 	void PrepareImGuiFrame();
 	void RenderImGuiFrame();
-	void RenderTerrain(Terrain terrain, TerrainShaderHandler terrainShaderHandler, Shadowmap shadowmap);
+	void RenderTerrain(const Terrain& terrain, TerrainShaderHandler terrainShaderHandler, Shadowmap shadowmap);
 	void RenderSkybox(Cubemap cubemap, SkyboxShaderHandler shader);
+	void RenderWater(Water water, WaterShaderHandler shader);
 	void Update();
 	void Destroy();
 };

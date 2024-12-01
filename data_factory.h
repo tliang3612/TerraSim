@@ -25,7 +25,7 @@ public:
 	GLuint CreateFBO();
 	void CreateAndPopulateBuffer(int attributeIndex, int elementWidth, float* data, int dataLength);
 	Model CreateModel(float* vertices, float* textures, int vertexCount);
-	Model CreateModelWithoutTextures(float* vertices, int vertexCount);
+	Model CreateModelWithoutTextureCoords(float* vertices, int vertexCount);
 	GLuint LoadTexture(std::string texturePath);
 	GLuint LoadCubemapTexture(std::vector<std::string> texturePaths);
 	void DeleteDataObjects();

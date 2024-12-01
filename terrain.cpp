@@ -2,33 +2,25 @@
 #include "data_factory.h"
 #include <vector>
 
-Terrain::Terrain(Model model, Heightmap heightmap, Shadowmap shadowmap, std::vector<GLuint> textureIDs)
-{
-    m_textureIDs = textureIDs;
-	m_model = model;
-	m_heightmap = heightmap; 
-    m_shadowmap = shadowmap;
-}
-
-
-void Terrain::SetHeightAtPoint(float x, float y, float height){
+Terrain::Terrain(Model model, Heightmap&& heightmap, Shadowmap shadowmap, std::vector<GLuint> textureIDs)
+    : m_textureIDs(textureIDs), m_model(model), m_shadowmap(shadowmap), m_heightmap(std::move(heightmap)) {
 
 }
 
-const float Terrain::GetHeightFromWorld(int pointX, int pointZ){
+
+const float Terrain::GetHeightFromWorld(int pointX, int pointZ) const {
+
+    float heightmapSize = m_heightmap.GetSize();
+    int heightmapResolution = m_heightmap.GetResolution();
+
     // terrain coords go from -heightmapSize/2 to +heightmapSize/2. normalize to [0,1]
-    float normalizedX = (pointX / m_heightmap.heightmapSize + 1.0f) * 0.5f; //[0, 1]
-    float normalizedZ = (pointZ / m_heightmap.heightmapSize + 1.0f) * 0.5f;
+    float normalizedX = (pointX / heightmapSize + 1.0f) * 0.5f; //[0, 1]
+    float normalizedZ = (pointZ / heightmapSize + 1.0f) * 0.5f;
 
-    int gridX = int(normalizedX * m_heightmap.heightmapResolution);
-    int gridZ = int(normalizedZ * m_heightmap.heightmapResolution);
+    int gridX = int(normalizedX * heightmapResolution);
+    int gridZ = int(normalizedZ * heightmapResolution);
 
-    if (gridX < 0 || gridX >= m_heightmap.heightmapResolution ||
-        gridZ < 0 || gridZ >= m_heightmap.heightmapResolution) {
-        return 0.0f; 
-    }
-
-    return m_heightmap.map[gridZ * m_heightmap.heightmapResolution + gridX];
+    return m_heightmap.GetHeight(gridX, gridZ);
 }
 
 void Terrain::Update(){
@@ -41,15 +33,11 @@ void Terrain::UpdateTexture(int index, GLuint newTextureID){
     }
 }
 
-void Terrain::Destroy() {
-	m_heightmap.Destroy();
-}
 
 //size is used to scale the terrain, distance between each 
-Terrain TerrainFactory::GenerateTerrain(DataFactory dataFactory, float size, int resolution, std::vector<GLuint> textureIDs)
-{
+Terrain TerrainFactory::GenerateTerrain(DataFactory dataFactory, float size, int resolution, std::vector<GLuint> textureIDs){
     std::vector<float> vertices;
-    std::vector<float> textures;
+    std::vector<float> textureCoords;
     std::vector<int> indices;
 
     //calculate the step size for texture coordinate
@@ -70,8 +58,8 @@ Terrain TerrainFactory::GenerateTerrain(DataFactory dataFactory, float size, int
             vertices.push_back(z);  
 
             //store texture coordinates
-            textures.push_back(u); 
-            textures.push_back(v); 
+            textureCoords.push_back(u); 
+            textureCoords.push_back(v); 
         }
     }
 
@@ -99,18 +87,20 @@ Terrain TerrainFactory::GenerateTerrain(DataFactory dataFactory, float size, int
 
     //reorder vertices and textures based on indices. Need to format it like such for VBO:
     //[x,y,z,u,v] <- vertex buffer data layout for each index
-    std::vector<float> verticesOut, texturesOut;
-    for (const int index : indices) {
+    std::vector<float> verticesOut;
+    std::vector<float> texturesOut;
+    for (int index : indices) {
         //grav each vertex and texture data based on the index
         verticesOut.push_back(vertices[index * 3 + 0]); //x
         verticesOut.push_back(vertices[index * 3 + 1]); //y
         verticesOut.push_back(vertices[index * 3 + 2]); //z
-        texturesOut.push_back(textures[index * 2 + 0]); //u
-        texturesOut.push_back(textures[index * 2 + 1]); //v
+        texturesOut.push_back(textureCoords[index * 2 + 0]); //u
+        texturesOut.push_back(textureCoords[index * 2 + 1]); //v
     }
 
     //create model with vertex and texture data
     Model terrainModelData = dataFactory.CreateModel(verticesOut.data(), texturesOut.data(), verticesOut.size() / 3);
-    Model shadowmapModelData = dataFactory.CreateModelWithoutTextures(verticesOut.data(), verticesOut.size() / 3);
-    return Terrain(terrainModelData, Heightmap(size, resolution, dataFactory), Shadowmap(resolution, dataFactory), textureIDs);
+    Model shadowmapModelData = dataFactory.CreateModelWithoutTextureCoords(verticesOut.data(), verticesOut.size() / 3);
+    Heightmap heightmap = Heightmap(size, resolution, dataFactory);
+    return Terrain(terrainModelData, std::move(heightmap), Shadowmap(resolution, dataFactory), textureIDs);
 }

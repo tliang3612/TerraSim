@@ -54,11 +54,11 @@ GLuint ShaderHandler::CompileShader(GLenum shaderType, std::string filePath)
 }
 
 //get the location of a uniform variable in this shader.
-GLuint ShaderHandler::GetUniformLocation(std::string name) {
+const GLuint ShaderHandler::GetUniformLocation(std::string name) const {
 	return glGetUniformLocation(m_shaderProgramID, name.c_str());
 }
 
-void ShaderHandler::SetUniformFloat(GLuint location, float value) {
+void ShaderHandler::LoadUniformFloat(GLuint location, float value) {
 	glUniform1f(location, value);
 }
 
@@ -66,30 +66,30 @@ void ShaderHandler::SetUniformInt(GLuint location, int value) {
 	glUniform1i(location, value);
 }
 
-void ShaderHandler::SetUniformVec2(GLuint location, glm::vec2& value) {
+void ShaderHandler::LoadUniformVec2(GLuint location, glm::vec2& value) {
 	glUniform2f(location, value.x, value.y);
 }
 
-void ShaderHandler::SetUniformVec3(GLuint location, glm::vec3& value) {
+void ShaderHandler::LoadUniformVec3(GLuint location, glm::vec3& value) {
 	glUniform3f(location, value.x, value.y, value.z);
 }
 
-void ShaderHandler::SetUniformVec4(GLuint location, glm::vec4& value) {
+void ShaderHandler::LoadUniformVec4(GLuint location, glm::vec4& value) {
 	glUniform4f(location, value.x, value.y, value.z, value.w);
 }
 
-void ShaderHandler::SetUniformMatrix4(GLuint location, glm::mat4& value) {
+void ShaderHandler::LoadUniformMatrix4(GLuint location, glm::mat4& value) {
 	glUniformMatrix4fv(location, 1, GL_FALSE, &value[0][0]);
 }
 
-void ShaderHandler::SetUniformSampler2D(GLuint location, GLenum texture, GLuint textureID) {
+void ShaderHandler::LoadUniformSampler2D(GLuint location, GLenum texture, GLuint textureID) {
     glActiveTexture(texture);
     glBindTexture(GL_TEXTURE_2D, textureID);
     glEnable(GL_TEXTURE_2D);
     glUniform1i(location, texture - GL_TEXTURE0);
 }
 
-void ShaderHandler::SetUniformSamplerCube(GLuint location, GLenum texture, GLuint cubemapTextureID) {
+void ShaderHandler::LoadUniformSamplerCube(GLuint location, GLenum texture, GLuint cubemapTextureID) {
     glActiveTexture(texture);
     glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTextureID);
     glEnable(GL_TEXTURE_CUBE_MAP);

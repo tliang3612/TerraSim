@@ -11,15 +11,15 @@ public:
 	void Disable();
 	void Destroy();
 
-	GLuint GetUniformLocation(std::string name);
+	const GLuint GetUniformLocation(std::string name) const;
 	void SetUniformInt(GLuint location, int value);
-	void SetUniformFloat(GLuint location, float value);
-	void SetUniformVec2(GLuint location, glm::vec2& value);
-	void SetUniformVec3(GLuint location, glm::vec3& value);
-	void SetUniformVec4(GLuint location, glm::vec4& value);
-	void SetUniformMatrix4(GLuint location, glm::mat4& value);
-	void SetUniformSampler2D(GLuint location, GLenum texture, GLuint textureID);
-	void SetUniformSamplerCube(GLuint location, GLenum texture, GLuint cubemapTextureID);
+	void LoadUniformFloat(GLuint location, float value);
+	void LoadUniformVec2(GLuint location, glm::vec2& value);
+	void LoadUniformVec3(GLuint location, glm::vec3& value);
+	void LoadUniformVec4(GLuint location, glm::vec4& value);
+	void LoadUniformMatrix4(GLuint location, glm::mat4& value);
+	void LoadUniformSampler2D(GLuint location, GLenum texture, GLuint textureID);
+	void LoadUniformSamplerCube(GLuint location, GLenum texture, GLuint cubemapTextureID);
 	void BindAttribute(int attribute, std::string variableName);
 
 

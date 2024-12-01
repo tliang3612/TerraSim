@@ -11,5 +11,5 @@ ShadowmapShaderHandler::ShadowmapShaderHandler() {
 }
 
 void ShadowmapShaderHandler::SetLightViewProjection(glm::mat4 lightViewProjection) {
-    SetUniformMatrix4(uLightProjection, lightViewProjection);
+    LoadUniformMatrix4(uLightProjection, lightViewProjection);
 }

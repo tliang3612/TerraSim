@@ -4,7 +4,6 @@
 struct Shadowmap {
 	GLuint textureID;
 	GLuint fboID;
-	GLuint depthTextureID;
 	int shadowMapResolution;
 
 	Shadowmap() = default;

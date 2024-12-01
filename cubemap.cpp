@@ -1,60 +1,59 @@
 #include "cubemap.h"
 
+const int NUM_VERTICES = 36;
+const float SIZE = 500.f;
 Cubemap::Cubemap(Model model, GLuint textureID) {
 	m_model = model;
 	m_textureID = textureID;
 }
 
-
-
 Cubemap CubemapFactory::GenerateCubemap(DataFactory dataFactory, GLuint textureID){
-	float size = 500.f;
 
 	//positions for a basic cube
 	float vertices[] = {
-		-size,  size, -size,
-		-size, -size, -size,
-		size, -size, -size,
-		 size, -size, -size,
-		 size,  size, -size,
-		-size,  size, -size,
+		-SIZE,  SIZE, -SIZE,
+		-SIZE, -SIZE, -SIZE,
+		SIZE, -SIZE, -SIZE,
+		 SIZE, -SIZE, -SIZE,
+		 SIZE,  SIZE, -SIZE,
+		-SIZE,  SIZE, -SIZE,
 
-		-size, -size,  size,
-		-size, -size, -size,
-		-size,  size, -size,
-		-size,  size, -size,
-		-size,  size,  size,
-		-size, -size,  size,
+		-SIZE, -SIZE,  SIZE,
+		-SIZE, -SIZE, -SIZE,
+		-SIZE,  SIZE, -SIZE,
+		-SIZE,  SIZE, -SIZE,
+		-SIZE,  SIZE,  SIZE,
+		-SIZE, -SIZE,  SIZE,
 
-		 size, -size, -size,
-		 size, -size,  size,
-		 size,  size,  size,
-		 size,  size,  size,
-		 size,  size, -size,
-		 size, -size, -size,
+		 SIZE, -SIZE, -SIZE,
+		 SIZE, -SIZE,  SIZE,
+		 SIZE,  SIZE,  SIZE,
+		 SIZE,  SIZE,  SIZE,
+		 SIZE,  SIZE, -SIZE,
+		 SIZE, -SIZE, -SIZE,
 
-		-size, -size,  size,
-		-size,  size,  size,
-		 size,  size,  size,
-		 size,  size,  size,
-		 size, -size,  size,
-		-size, -size,  size,
+		-SIZE, -SIZE,  SIZE,
+		-SIZE,  SIZE,  SIZE,
+		 SIZE,  SIZE,  SIZE,
+		 SIZE,  SIZE,  SIZE,
+		 SIZE, -SIZE,  SIZE,
+		-SIZE, -SIZE,  SIZE,
 
-		-size,  size, -size,
-		 size,  size, -size,
-		 size,  size,  size,
-		 size,  size,  size,
-		-size,  size,  size,
-		-size,  size, -size,
+		-SIZE,  SIZE, -SIZE,
+		 SIZE,  SIZE, -SIZE,
+		 SIZE,  SIZE,  SIZE,
+		 SIZE,  SIZE,  SIZE,
+		-SIZE,  SIZE,  SIZE,
+		-SIZE,  SIZE, -SIZE,
 
-		-size, -size, -size,
-		-size, -size,  size,
-		 size, -size, -size,
-		 size, -size, -size,
-		-size, -size,  size,
-		 size, -size,  size
+		-SIZE, -SIZE, -SIZE,
+		-SIZE, -SIZE,  SIZE,
+		 SIZE, -SIZE, -SIZE,
+		 SIZE, -SIZE, -SIZE,
+		-SIZE, -SIZE,  SIZE,
+		 SIZE, -SIZE,  SIZE
 	};
 
-	Model cubemapModelData = dataFactory.CreateModelWithoutTextures(vertices, 36);
+	Model cubemapModelData = dataFactory.CreateModelWithoutTextureCoords(vertices, NUM_VERTICES);
 	return Cubemap(cubemapModelData, textureID);
 }

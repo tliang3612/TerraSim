@@ -26,56 +26,56 @@ TerrainShaderHandler::TerrainShaderHandler() {
     uBrightness = GetUniformLocation("uBrightness");
     uTextureScale = GetUniformLocation("uTextureScale");
     BindAttribute(0, "iPosition");
-    BindAttribute(1, "iTexture");
+    BindAttribute(1, "iTextureCoords");
 }
 
 void TerrainShaderHandler::SetClip(glm::vec4 clip) {
-    SetUniformVec4(uClip, clip);
+    LoadUniformVec4(uClip, clip);
 }
 
 void TerrainShaderHandler::SetLightDirection(glm::vec3 lightDirection) {
-    SetUniformVec3(uLightDirection, lightDirection);
+    LoadUniformVec3(uLightDirection, lightDirection);
 }
 
 void TerrainShaderHandler::SetViewProjection(glm::mat4 viewProjection) {
-    SetUniformMatrix4(uViewProjection, viewProjection);
+    LoadUniformMatrix4(uViewProjection, viewProjection);
 }
 
 void TerrainShaderHandler::SetMinHeight(float minHeight) {
-    SetUniformFloat(uMinHeight, minHeight);
+    LoadUniformFloat(uMinHeight, minHeight);
 }
 
 void TerrainShaderHandler::SetMaxHeight(float maxHeight) {
-    SetUniformFloat(uMaxHeight, maxHeight);
+    LoadUniformFloat(uMaxHeight, maxHeight);
 }
 
 void TerrainShaderHandler::SetIndicatorPosition(glm::vec2 indicatorPosition) {
-    SetUniformVec2(uIndicatorPosition, indicatorPosition);
+    LoadUniformVec2(uIndicatorPosition, indicatorPosition);
 }
 
 void TerrainShaderHandler::SetIndicatorRadius(float indicatorRadius) {
-    SetUniformFloat(uIndicatorRadius, indicatorRadius);
+    LoadUniformFloat(uIndicatorRadius, indicatorRadius);
 }
 void TerrainShaderHandler::SetLightViewProjection(glm::mat4 lightViewProjection) {
-    SetUniformMatrix4(uLightViewProjection, lightViewProjection);
+    LoadUniformMatrix4(uLightViewProjection, lightViewProjection);
 }
 
 void TerrainShaderHandler::SetBrightness(float brightness) {
-    SetUniformFloat(uBrightness, brightness);
+    LoadUniformFloat(uBrightness, brightness);
 }
 
 void TerrainShaderHandler::SetTextureScale(float textureScale){
-    SetUniformFloat(uTextureScale, textureScale);
+    LoadUniformFloat(uTextureScale, textureScale);
 }
 
 void TerrainShaderHandler::SetSunFalloff(float sunFalloff){
-    SetUniformFloat(uSunFalloff, sunFalloff);
+    LoadUniformFloat(uSunFalloff, sunFalloff);
 }
 
 void TerrainShaderHandler::SetSunIntensity(float sunIntensity){
-    SetUniformFloat(uSunIntensity, sunIntensity);
+    LoadUniformFloat(uSunIntensity, sunIntensity);
 }
 
 void TerrainShaderHandler::SetCameraPosition(glm::vec3 cameraPosition){
-    SetUniformVec3(uCameraPosition, cameraPosition);
+    LoadUniformVec3(uCameraPosition, cameraPosition);
 }

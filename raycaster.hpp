@@ -4,7 +4,7 @@
 
 struct Raycaster {
 
-	glm::vec3 static GetRaycastFromCameraToTerrain(glm::vec3 cameraPos, Terrain terrain, float ndcX, float ndcY, glm::mat4 projectionMatrix, glm::mat4 viewMatrix) {
+	glm::vec3 static GetRaycastFromCameraToTerrain(glm::vec3 cameraPos, Terrain& terrain, float ndcX, float ndcY, glm::mat4 projectionMatrix, glm::mat4 viewMatrix) {
 		glm::vec4 clipSpaceCoords(ndcX, ndcY, -1.0f, 1.0f);
 		glm::mat4 inverseProjection = glm::inverse(projectionMatrix);
 		glm::vec4 viewSpaceCoords = inverseProjection * clipSpaceCoords; //unproject the screen space coordinates to get view space

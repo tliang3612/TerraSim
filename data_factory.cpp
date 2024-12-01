@@ -38,7 +38,7 @@ GLuint DataFactory::CreateTexture(){
 
 
 // Create a model from model data
-Model DataFactory::CreateModel(float* vertices, float* textures, int vertexCount)
+Model DataFactory::CreateModel(float* vertices, float* textureCoords, int vertexCount)
 {
 	//create vao
 	GLuint vaoID = CreateVAO();
@@ -48,19 +48,19 @@ Model DataFactory::CreateModel(float* vertices, float* textures, int vertexCount
 	/*
 	For all models created, the attribute indices are configured as such:
 		0 for vertices
-		1 for textures
+		1 for texture coordinates
 	*/
 
 	//Create 2 vbos that dictate how data is layed out for this model
 	CreateAndPopulateBuffer(0, 3, vertices, vertexCount);
-	CreateAndPopulateBuffer(1, 2, textures, vertexCount);
+	CreateAndPopulateBuffer(1, 2, textureCoords, vertexCount);
 
 	glBindVertexArray(0);
 	return Model(vaoID, vertexCount);
 }
 
 // Create a model from model data
-Model DataFactory::CreateModelWithoutTextures(float* vertices, int vertexCount)
+Model DataFactory::CreateModelWithoutTextureCoords(float* vertices, int vertexCount)
 {
 	//create vao
 	GLuint vaoID = CreateVAO();

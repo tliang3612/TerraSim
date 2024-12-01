@@ -11,6 +11,7 @@ public:
 
 	// Get the camera's view matrix.
 	glm::mat4 GetViewMatrix();
+	glm::mat4 GetReflectionViewMatrix(float waterHeight);
 	glm::vec3 position;
 	float pitch;
 	float yaw;

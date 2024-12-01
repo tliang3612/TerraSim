@@ -1,7 +1,5 @@
 #pragma once
-#include "heightmap.hpp"
 #include "data_factory.h"
-#include "shadowmap.hpp"
 
 class Cubemap {
 public:
