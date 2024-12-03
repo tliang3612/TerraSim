@@ -32,7 +32,7 @@ public:
     void SetHeight(int x, int z, float height);
 
     float Amplitude = 80.f;
-    float Frequency = 0.2f;
+    float Frequency = 0.25f;
 
 private:
     float fBm(glm::vec2 position);

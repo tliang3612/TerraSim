@@ -2,8 +2,9 @@
 #include "data_factory.h"
 #include <vector>
 
-Terrain::Terrain(Model model, Heightmap&& heightmap, Shadowmap shadowmap, std::vector<GLuint> textureIDs)
-    : m_textureIDs(textureIDs), m_model(model), m_shadowmap(shadowmap), m_heightmap(std::move(heightmap)) {
+Terrain::Terrain(Model model, Heightmap&& heightmap, Shadowmap shadowmap, std::vector<GLuint> textureIDs, std::vector<float> textureCoords, std::vector<float> vertices, std::vector<int> indices)
+    : m_textureIDs(textureIDs), m_model(model), m_shadowmap(shadowmap), m_heightmap(std::move(heightmap)),
+      m_textureCoords(textureCoords), m_vertices(vertices), m_indices(indices){
 
 }
 
@@ -54,34 +55,31 @@ Terrain TerrainFactory::GenerateTerrain(DataFactory dataFactory, float size, int
 
             //store vertex position
             vertices.push_back(x);  
-            vertices.push_back(0.0f);  
+            vertices.push_back(0.f);  
             vertices.push_back(z);  
 
             //store texture coordinates
             textureCoords.push_back(u); 
             textureCoords.push_back(v); 
-        }
-    }
 
-    //generate indices for quads (two triangles per quad)
-    for (int z = 0; z < resolution - 1; z++) {
-        for (int x = 0; x < resolution - 1; x++) {
-            int topLeft = z * resolution + x; 
-            int topRight = topLeft + 1;
-            int bottomLeft = (z + 1) * resolution + x;
-            int bottomRight = bottomLeft + 1;
+            //insert here
+            if (i < resolution - 1 && j < resolution - 1) {
+                int topLeft = i * resolution + j;
+                int topRight = topLeft + 1;
+                int bottomLeft = (i + 1) * resolution + j;
+                int bottomRight = bottomLeft + 1;
 
 
-            //first triangle (topleft)
-            indices.push_back(topLeft);
-            indices.push_back(bottomLeft);
-            indices.push_back(topRight);
+                //first triangle (topleft)
+                indices.push_back(topLeft);
+                indices.push_back(bottomLeft);
+                indices.push_back(topRight);
 
-            //second triangle (bottom right)
-            indices.push_back(topRight);
-            indices.push_back(bottomLeft);
-            indices.push_back(bottomRight);
-
+                //second triangle (bottom right)
+                indices.push_back(topRight);
+                indices.push_back(bottomLeft);
+                indices.push_back(bottomRight);
+            }
         }
     }
 
@@ -102,5 +100,6 @@ Terrain TerrainFactory::GenerateTerrain(DataFactory dataFactory, float size, int
     Model terrainModelData = dataFactory.CreateModel(verticesOut.data(), texturesOut.data(), verticesOut.size() / 3);
     Model shadowmapModelData = dataFactory.CreateModelWithoutTextureCoords(verticesOut.data(), verticesOut.size() / 3);
     Heightmap heightmap = Heightmap(size, resolution, dataFactory);
-    return Terrain(terrainModelData, std::move(heightmap), Shadowmap(resolution, dataFactory), textureIDs);
+    Shadowmap shadowmap = Shadowmap(resolution, dataFactory);
+    return Terrain(terrainModelData, std::move(heightmap), shadowmap, textureIDs, textureCoords, vertices, indices);
 }

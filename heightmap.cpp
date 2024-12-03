@@ -24,7 +24,7 @@ void Heightmap::GenerateHeightsUsingNoise(int noiseType, bool setSeed) {
 
     if (noiseType == 0) {
         m_noise.SetNoiseType(FastNoise::SimplexFractal);
-        m_noise.SetFractalOctaves(6);
+        m_noise.SetFractalOctaves(5);
     }
     else {
         m_noise.SetNoiseType(FastNoise::Simplex);

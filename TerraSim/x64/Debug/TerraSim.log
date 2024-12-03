@@ -31,7 +31,15 @@ C:\Users\broni\source\repos\TerraSim\raycaster.hpp(26,92): warning C4244:       
 C:\Users\broni\source\repos\TerraSim\raycaster.hpp(26,92): warning C4244:         ]
   (compiling source file 'TerraSim.cpp')
   
-C:\Users\broni\source\repos\TerraSim\TerraSim.cpp(45,13): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\broni\source\repos\TerraSim\TerraSim.cpp(45,27): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\broni\source\repos\TerraSim\TerraSim.cpp(88,17): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\broni\source\repos\TerraSim\TerraSim.cpp(47,13): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\broni\source\repos\TerraSim\TerraSim.cpp(47,27): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\broni\source\repos\TerraSim\TerraSim.cpp(81,17): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\broni\source\repos\TerraSim\TerraSim.cpp(436,55): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\broni\source\repos\TerraSim\TerraSim.cpp(436,29): warning C4267: 'initializing': conversion from 'size_t' to 'const int', possible loss of data
+  renderer.cpp
+C:\Users\broni\source\repos\TerraSim\heightmap.h(27,48): warning C4244: 'return': conversion from 'const int' to 'const float', possible loss of data
+  (compiling source file 'renderer.cpp')
+  
+  water.cpp
+  Generating Code...
   TerraSim.vcxproj -> C:\Users\broni\source\repos\TerraSim\x64\Debug\TerraSim.exe

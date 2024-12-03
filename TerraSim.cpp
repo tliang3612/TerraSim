@@ -20,6 +20,8 @@
 #include "shadowmap.hpp"
 #include "light.hpp"
 #include <fstream>
+#include <sstream>
+#include <thread>
 #undef main // Fixes weird SDL issue
 
 int main()
@@ -54,18 +56,9 @@ int main()
 	static float sunFalloff = 30.f;
 	static float sunIntensity = .3f;
 
-	//water
-	static float moveFactor = 0.f;
-	static float waterHeight = .5f;
-	static float waterShininess;
-	static bool waterEnabled = false;
-
-	//terrain
-	static float amplitude = 80.f;
-	static float frequency = .2f;
 
 	//load the textures
-	static float texScaleVal = 50.f;
+	static float texScaleVal = 25.f;
 	GLuint textureID1 = dataFactory.LoadTexture("resources/Base.png");
 	GLuint textureID2 = dataFactory.LoadTexture("resources/Ground.png");
 	GLuint textureID3 = dataFactory.LoadTexture("resources/Rock.png");
@@ -103,6 +96,16 @@ int main()
 
 	//for shadowmap
 	static bool shadowmapDirty = true;
+
+	//for water
+	static float waterHeight = water.WaterHeight;
+	static float waterShininess = water.WaterShininess;
+	static float moveFactor = 0.f;
+	static bool waterEnabled = false;
+
+	//for terrain
+	static float amplitude = heightmap.Amplitude;
+	static float frequency = heightmap.Frequency;
 
 	auto deltaTimeCounter = SDL_GetPerformanceCounter(); //record the deltaTime counter
 	auto fpsCounter = SDL_GetPerformanceCounter(); //record the fps counter
@@ -389,13 +392,103 @@ int main()
 			}
 			ImGui::End();
 
-			ImGui::Begin("Export"); {
+			ImGui::Begin("Export");
+			{
 				ImGui::PushItemWidth(150);
-				if (ImGui::Button("Export to .obj")) {
 
+				static bool isExporting = false;
+				static float progress = 0.0f;
+
+				if (ImGui::Button("Export to .obj")) {
+					const char* filterPatterns[] = { "*.obj" };
+
+					//open save file dialog using tiny file dialog
+					const char* filePath = tinyfd_saveFileDialog(
+						"Export Wavefront File",
+						"terrain.obj",
+						1,
+						filterPatterns,
+						"Wavefront File"
+					);
+
+					if (filePath) {
+						isExporting = true;
+						progress = 0.f;
+
+						ImGui::OpenPopup("Exporting");
+
+						//create a thread for the exporting the heightmap
+						std::thread([&]() {
+							std::ostringstream output;
+
+							std::vector<int> indices = terrain.GetIndices();
+
+							std::ofstream file(filePath);
+							if (!file.is_open()) {
+								std::cerr << "Error trying to open file for writing: " << filePath << std::endl;
+								isExporting = false;
+								return 0;
+							}
+
+							float step = (2.f * size) / (resolution - 1);
+
+							//for progress bar
+							int totalSteps = resolution * resolution + indices.size() / 3;
+							int currentStep = 0;
+
+							for (int z = 0; z < resolution; z++) {
+								for (int x = 0; x < resolution; ++x) {
+									float posX = -size + x * step;
+									float posZ = -size + z * step;
+									float posY = heightmap.GetHeight(x, z); //height from heightmap
+									output << "v " << posX << " " << posY << " " << posZ << "\n";
+
+									float u = float(x) / (resolution - 1);
+									float v = float(z) / (resolution - 1);
+									output << "vt " << u << " " << v << "\n";
+
+									//progress update
+									currentStep++;
+									progress = float(currentStep) / totalSteps;
+								}
+							}
+
+							for (int i = 0; i < indices.size(); i += 3) {
+								int corner1 = indices[i] + 1;
+								int corner2 = indices[i + 1] + 1;
+								int corner3 = indices[i + 2] + 1;
+
+								output << "f " << corner1 << "/" << corner1 << " "
+									           << corner2 << "/" << corner2 << " "
+									           << corner3 << "/" << corner3 << "\n";
+
+								//progress update
+								currentStep++;
+								progress = float(currentStep) / totalSteps;
+							}
+
+							file << output.str();
+							file.close();
+
+							isExporting = false;
+							}).detach();
+					}
 				}
 
-
+				//catch open popup signal from imgui. if caught, start progress bar
+				if (ImGui::BeginPopupModal("Exporting", nullptr)) {
+					if (isExporting) {
+						ImGui::Text("Exporting terrain to .obj...");
+						ImGui::ProgressBar(progress, ImVec2(ImGui::GetWindowWidth() - 20.f, 0.f));
+					}
+					else {
+						ImGui::Text("Export completed!");
+						if (ImGui::Button("Close")) {
+							ImGui::CloseCurrentPopup();
+						}
+					}
+					ImGui::EndPopup();
+				}
 
 				ImGui::PopItemWidth();
 			}

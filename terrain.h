@@ -5,7 +5,7 @@
 
 class Terrain {
 public:
-	Terrain(Model model, Heightmap&& heightmap, Shadowmap shadowmap, std::vector<GLuint> textureIDs);
+	Terrain(Model model, Heightmap&& heightmap, Shadowmap shadowmap, std::vector<GLuint> textureIDs, std::vector<float> textureCoords, std::vector<float> vertices, std::vector<int> indices);
 	Terrain() = default;
 
 	void Update();

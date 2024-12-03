@@ -43,7 +43,7 @@ vec3 CalculateSpecular(vec3 unitNormal, vec3 viewVector, float diffuseFactor) {
     float shininessFactor = clamp(uWaterShininess / 100.f, 0.01f, 1.f); 
     float specular = smoothstep(1.f - shininessFactor, 1.f, alignment); 
 
-    return (specular * sunlightColor * reflectivity);
+    return (specular * vec3(1.f) * reflectivity);
 }
 
 
@@ -103,7 +103,7 @@ void main() {
 
     vec3 totalLighting = max(ambient + diffuse + sunlightEffect, 0.f);
     vec4 color = mix(reflectionColor, refractionColor, refractiveFactor);
-    oFragColor = mix(color, waterColor, 0.1f) * vec4(totalLighting, 1.f) + vec4(specularFactor, 1.f);
+    oFragColor = mix(color, waterColor, 0.2f) * vec4(totalLighting, 1.f) + vec4(specularFactor, 1.f);
 
     //ensure alpha of water near the edges fade out
     oFragColor.a = clamp(depth / 10.f, 0.f, 1.f);
