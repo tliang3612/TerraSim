@@ -20,6 +20,7 @@ public:
 	GLuint uBrightness;
 	GLuint uSunIntensity;
 	GLuint uSunFalloff;
+	GLuint uSunColor;
 	GLuint uWaterHeight;
 	GLuint uWaterShininess;
 	
@@ -33,5 +34,6 @@ public:
 	void SetSunIntensity(float sunIntensity);
 	void SetWaterHeight(float waterHeight);
 	void SetWaterShininess(float waterShininess);
+	void SetSunColor(glm::vec3 sunColor);
 
 };

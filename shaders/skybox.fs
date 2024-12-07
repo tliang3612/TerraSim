@@ -9,16 +9,16 @@ uniform vec3 uLightDirection;
 
 uniform float uSunFalloff;   
 uniform float uSunIntensity;
+uniform vec3 uSunColor;
 
 void main() {
-    vec3 sunlightColor = vec3(1.f, 0.9f, 0.7f); 
-
     float diffuse = max(dot(normalize(vPosition), normalize(uLightDirection)), 0.0f); //diffuse calculations
 
     float sunHighlight = pow(diffuse, uSunFalloff); 
     sunHighlight = smoothstep(0.f, 0.5f, sunHighlight); 
+    float ambientSunHightlight = 0.2f; //appleid to the entire skybox
 
-    vec3 sunColor = sunlightColor * sunHighlight * uSunIntensity;
+    vec3 sunColor = uSunColor * (ambientSunHightlight + sunHighlight * uSunIntensity);
 
     vec3 skyboxColor = texture(uCubemap, normalize(vPosition)).rgb;
 

@@ -25,6 +25,7 @@ public:
 	GLuint uCameraPosition;
 	GLuint uSunFalloff;
 	GLuint uSunIntensity;
+	GLuint uSunColor;
 	GLuint uBrightness;
 	GLuint uTextureScale;
 
@@ -41,4 +42,5 @@ public:
 	void SetTextureScale(float textureScale);
 	void SetSunFalloff(float sunFalloff);
 	void SetSunIntensity(float sunIntensity);
+	void SetSunColor(glm::vec3 sunColor);
 };

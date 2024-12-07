@@ -14,7 +14,7 @@ private:
 	Display m_display;
 	const float m_fov = 60.0f;
 	const float m_nearPlane = 1.f;
-	const float m_farPlane = 3000.0f;
+	const float m_farPlane = 5000.0f;
 	int m_width;
 	int m_height;
 	glm::mat4 m_projection;

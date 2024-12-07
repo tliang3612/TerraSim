@@ -17,6 +17,7 @@ uniform float uMaxHeight;
 uniform vec2 uIndicatorPosition;
 uniform float uIndicatorRadius;
 
+uniform vec3 uSunColor;
 uniform float uSunFalloff;   
 uniform float uSunIntensity;
 
@@ -100,17 +101,16 @@ float CalculateShadow(){
 
 void main() {
 	vec3 unitNormal = normalize(vNormal); // Must normalize for dot product math calculation things
-    vec3 lightColor = vec3(1.0, 0.9, 0.7); 
-    vec3 ambient = lightColor * 0.3f;
+    vec3 ambient = vec3(1.f) * 0.3f;
     float shadow = CalculateShadow();
 
     //diffuse calculations
     float diffuseFactor = max(dot(unitNormal, uLightDirection), 0.f); //the more front facing towards light, the brighter
-	vec3 diffuse = lightColor * diffuseFactor * uBrightness * (1.f - shadow);
+	vec3 diffuse = uSunColor * diffuseFactor * uBrightness * (1.f - shadow);
     
     //sun calculations
     float sunHighlight = pow(diffuseFactor, uSunFalloff * .25f);
-    vec3 sunlightEffect = lightColor * sunHighlight * uSunIntensity;
+    vec3 sunlightEffect = uSunColor * sunHighlight * uSunIntensity;
 
     //calculate texture color
     vec3 textureColor = BlendTextures();

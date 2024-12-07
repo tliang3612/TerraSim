@@ -13,9 +13,11 @@ public:
 	GLuint uLightDirection;
 	GLuint uSunFalloff;
 	GLuint uSunIntensity;
+	GLuint uSunColor;
 
 	void SetViewProjection(glm::mat4 viewProjection);
 	void SetLightDirection(glm::vec3 lightDirection);
 	void SetSunFalloff(float sunFalloff);
 	void SetSunIntensity(float sunIntensity);
+	void SetSunColor(glm::vec3 sunColor);
 };

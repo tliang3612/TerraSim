@@ -21,10 +21,12 @@ TerrainShaderHandler::TerrainShaderHandler() {
     uShadowmap = GetUniformLocation("uShadowmap");
     uSunFalloff = GetUniformLocation("uSunFalloff");
     uSunIntensity = GetUniformLocation("uSunIntensity");
+    uSunColor = GetUniformLocation("uSunColor");
     uLightViewProjection = GetUniformLocation("uLightViewProjection");
     uCameraPosition = GetUniformLocation("uCameraPosition");
     uBrightness = GetUniformLocation("uBrightness");
     uTextureScale = GetUniformLocation("uTextureScale");
+
     BindAttribute(0, "iPosition");
     BindAttribute(1, "iTextureCoords");
 }
@@ -78,4 +80,8 @@ void TerrainShaderHandler::SetSunIntensity(float sunIntensity){
 
 void TerrainShaderHandler::SetCameraPosition(glm::vec3 cameraPosition){
     LoadUniformVec3(uCameraPosition, cameraPosition);
+}
+
+void TerrainShaderHandler::SetSunColor(glm::vec3 sunColor){
+    LoadUniformVec3(uSunColor, sunColor);
 }

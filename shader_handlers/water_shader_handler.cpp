@@ -20,6 +20,7 @@ WaterShaderHandler::WaterShaderHandler() {
     uSunFalloff = GetUniformLocation("uSunFalloff");
     uWaterShininess = GetUniformLocation("uWaterShininess");
     uWaterHeight = GetUniformLocation("uWaterHeight");
+    uSunColor = GetUniformLocation("uSunColor");
     BindAttribute(0, "iPosition");
     BindAttribute(1, "iTextureCoords");
 }
@@ -58,4 +59,8 @@ void WaterShaderHandler::SetWaterHeight(float waterHeight){
 
 void WaterShaderHandler::SetWaterShininess(float waterShininess){
     LoadUniformFloat(uWaterShininess, waterShininess);
+}
+
+void WaterShaderHandler::SetSunColor(glm::vec3 sunColor) {
+    LoadUniformVec3(uSunColor, sunColor);
 }

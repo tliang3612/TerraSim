@@ -22,6 +22,7 @@
 #include <fstream>
 #include <sstream>
 #include <thread>
+#include <glm/gtc/type_ptr.hpp>
 #undef main // Fixes weird SDL issue
 
 int main()
@@ -31,7 +32,7 @@ int main()
 	Renderer renderer = Renderer("TerraSim Prototype", displayWidth, displayHeight);
 
 	//create the camera
-	Camera camera = Camera(glm::vec3(0.0f, 300.f, 0.0f), 0.0f, 0.f, 0.0f);
+	Camera camera = Camera(glm::vec3(0.f, 300.f, 0.f), 0.f, 0.f, 0.f);
 
 	//init shaders
 	TerrainShaderHandler terrainShaderHandler = TerrainShaderHandler();
@@ -43,13 +44,13 @@ int main()
 	//user inputs
 	bool keyW = false, keyA = false, keyS = false, keyD = false, keyQ = false, keyE = false;
 	bool keyLeftShift = false, keyRightShift = false;
-	float mouseDragX = 0.f, mouseDragY = displayHeight;
+	float mouseDeltaX = 0.f, mouseDeltaY = displayHeight;
 	int mouseX = 0.f, mouseY = 0.f;
 	bool mouseLeft = false, mouseRight = false;
 	float sculptRadius = 50.f;
 	
 	//light
-	Light light(glm::vec3(0.f, 1.f, 0.f), glm::vec3(100000.f, 100000.f, 100000.f), .8f, 20.f, .5f);
+	Light light(glm::vec3(0.f, 1.f, 0.f), glm::vec3(100000.f, 100000.f, 100000.f), .8f, 20.f, .5f, glm::vec3(1.f, 0.9f, 0.7f));
 	static float azimuthVal = 0.f; //horizontal rotation of light
 	static float altitudeVal = 30.f; //vertical rotation of light
 	static float brightness = 1.f;
@@ -98,10 +99,8 @@ int main()
 	static bool shadowmapDirty = true;
 
 	//for water
-	static float waterHeight = water.WaterHeight;
-	static float waterShininess = water.WaterShininess;
 	static float moveFactor = 0.f;
-	static bool waterEnabled = false;
+	static bool waterEnabled = true;
 
 	//for terrain
 	static float amplitude = heightmap.Amplitude;
@@ -163,13 +162,13 @@ int main()
 				mouseX = e.motion.x;
 				mouseY = e.motion.y;
 				if (e.motion.state & SDL_BUTTON(SDL_BUTTON_MIDDLE)) {
-					mouseDragX += e.motion.xrel;
-					mouseDragY += e.motion.yrel;
+					mouseDeltaX += e.motion.xrel;
+					mouseDeltaY += e.motion.yrel;
 				}
 			} 
 		}
 
-		camera.Update(deltaTime, keyW, keyA, keyS, keyD, keyQ, keyE, keyLeftShift, mouseDragX, mouseDragY, displayWidth, displayHeight);	
+		camera.Update(deltaTime, keyW, keyA, keyS, keyD, keyQ, keyE, keyLeftShift, mouseDeltaX, mouseDeltaY, displayWidth, displayHeight);	
 
 		//shadowmap
 		Shadowmap shadowmap = terrain.GetShadowmap();
@@ -179,11 +178,10 @@ int main()
 		glm::mat4 viewMatrix = camera.GetViewMatrix();
 
 		//water
-		float waterHeight = water.WaterHeight;
 		moveFactor += water.WaveSpeed * deltaTime;
 		if (moveFactor > 1.f) moveFactor = 0.f;
-		glm::vec4 reflectionClip = glm::vec4(0.f, 1.f, 0.f, -waterHeight);
-		glm::vec4 refractionClip = glm::vec4(0.f, -1.f, 0.f, waterHeight + 8.f);
+		glm::vec4 reflectionClip = glm::vec4(0.f, 1.f, 0.f, -water.WaterHeight);
+		glm::vec4 refractionClip = glm::vec4(0.f, -1.f, 0.f, water.WaterHeight);
 		glm::vec4 defaultClip = glm::vec4(0.f);
 
 		//render terrain to shadowmap if light has moved (shadowmapDirty)
@@ -205,7 +203,7 @@ int main()
 		if (waterEnabled) {
 			//reflection pass		
 			water.BindFramebuffer(0);
-			glm::mat4 waterViewMatrix = camera.GetReflectionViewMatrix(waterHeight);
+			glm::mat4 waterViewMatrix = camera.GetReflectionViewMatrix(water.WaterHeight);
 
 			skyboxShaderHandler.Enable();
 			skyboxShaderHandler.SetViewProjection(projectionMatrix * glm::mat4(glm::mat3(waterViewMatrix)));
@@ -242,6 +240,7 @@ int main()
 			skyboxShaderHandler.SetLightDirection(light.lightDirection);
 			skyboxShaderHandler.SetSunFalloff(light.sunFalloff);
 			skyboxShaderHandler.SetSunIntensity(light.sunIntensity);
+			skyboxShaderHandler.SetSunColor(light.sunColor);
 			skyboxShaderHandler.SetViewProjection(projectionMatrix* glm::mat4(glm::mat3(viewMatrix)));
 			renderer.RenderSkybox(skybox, skyboxShaderHandler);
 			skyboxShaderHandler.Disable();
@@ -254,6 +253,7 @@ int main()
 			terrainShaderHandler.SetBrightness(light.brightness);
 			terrainShaderHandler.SetSunFalloff(light.sunFalloff);
 			terrainShaderHandler.SetSunIntensity(light.sunIntensity);
+			terrainShaderHandler.SetSunColor(light.sunColor);
 			terrainShaderHandler.SetCameraPosition(camera.position);
 			terrainShaderHandler.SetTextureScale(texScaleVal);
 			terrainShaderHandler.SetClip(defaultClip);
@@ -268,9 +268,10 @@ int main()
 				waterShaderHandler.SetCameraPosition(camera.position);
 				waterShaderHandler.SetBrightness(light.brightness);
 				waterShaderHandler.SetSunFalloff(light.sunFalloff);
+				waterShaderHandler.SetSunColor(light.sunColor);
 				waterShaderHandler.SetSunIntensity(light.sunIntensity);
-				waterShaderHandler.SetWaterHeight(waterHeight);
-				waterShaderHandler.SetWaterShininess(waterShininess);
+				waterShaderHandler.SetWaterHeight(water.WaterHeight);
+				waterShaderHandler.SetWaterShininess(water.WaterShininess);
 				renderer.RenderWater(water, waterShaderHandler);
 				waterShaderHandler.Disable();
 			}
@@ -281,12 +282,13 @@ int main()
 		{
 			ImGui::Begin("Light Settings"); {
 				ImGui::PushItemWidth(150);
-				ImGui::SliderFloat("Light Azimuth", &azimuthVal, 0.0f, 360.f);
-				ImGui::SliderFloat("Light Altitude", &altitudeVal, 0.0f, 360.f);
-				ImGui::SliderFloat("Brightness", &brightness, 0.0f, 1.f);
+				ImGui::SliderFloat("Light Azimuth", &azimuthVal, 0.f, 360.f);
+				ImGui::SliderFloat("Light Altitude", &altitudeVal, 0.f, 360.f);
+				ImGui::SliderFloat("Brightness", &brightness, 0.f, 1.f);
 				ImGui::SliderFloat("Sun Falloff", &sunFalloff, 0.01f, 100.f);
-				ImGui::SliderFloat("Sun Intensity", &sunIntensity, 0.0f, 1.f);
+				ImGui::SliderFloat("Sun Intensity", &sunIntensity, 0.f, 1.f);
 
+				ImGui::ColorEdit3("Sun Color", glm::value_ptr(light.sunColor));
 
 				float horizontalScaling = std::cos(glm::radians(altitudeVal));
 				float xAngle = std::cos(glm::radians(azimuthVal)) * horizontalScaling;
@@ -316,8 +318,8 @@ int main()
 				static int noiseType = 0;
 				ImGui::Combo("Noise Type", &noiseType, noiseTypes, sizeof(noiseTypes) / sizeof(noiseTypes[0]));
 
-				bool amplitudeChanged = ImGui::SliderFloat("Amplitude", &amplitude, 0.0f, 100.0f);
-				bool frequencyChanged = ImGui::SliderFloat("frequency", &frequency, 0.0f, 1.0f);
+				bool amplitudeChanged = ImGui::SliderFloat("Amplitude", &amplitude, 0.f, 100.f);
+				bool frequencyChanged = ImGui::SliderFloat("frequency", &frequency, 0.f, 1.f);
 
 
 				if (amplitudeChanged || frequencyChanged) {
@@ -353,14 +355,14 @@ int main()
 				ImGui::Combo("Brush Type", &brushType, brushTypes, sizeof(brushTypes) / sizeof(brushTypes[0]));
 
 				static float strength = .5f;
-				ImGui::SliderFloat("Strength", &strength, 0.0f, 1.0f);
+				ImGui::SliderFloat("Strength", &strength, 0.f, 1.f);
 
 				static bool brushEnabled = true;
 				ImGui::Checkbox("Enable Brush", &brushEnabled);
 
 				if (brushEnabled) {
-					float ndcX = (2.0f * mouseX) / displayWidth - 1.0f;
-					float ndcY = 1.0f - (2.0f * mouseY) / displayHeight;
+					float ndcX = (2.f * mouseX) / displayWidth - 1.f;
+					float ndcY = 1.f - (2.f * mouseY) / displayHeight;
 
 					glm::vec3 intersectionPoint = Raycaster::GetRaycastFromCameraToTerrain(camera.position, terrain, ndcX, ndcY, projectionMatrix, viewMatrix);
 
@@ -397,7 +399,7 @@ int main()
 				ImGui::PushItemWidth(150);
 
 				static bool isExporting = false;
-				static float progress = 0.0f;
+				static float progress = 0.f;
 
 				if (ImGui::Button("Export to .obj")) {
 					const char* filterPatterns[] = { "*.obj" };
@@ -536,7 +538,7 @@ int main()
 					ImGui::Text(textureNames[i].c_str());
 				}
 
-				ImGui::SliderFloat("Texture Scale", &texScaleVal, 10.0f, 300.f);
+				ImGui::SliderFloat("Texture Scale", &texScaleVal, 10.f, 300.f);
 
 				ImGui::PopItemWidth();
 			}
@@ -546,12 +548,9 @@ int main()
 				ImGui::PushItemWidth(150);
 
 
-				ImGui::SliderFloat("Water Level", &waterHeight, terrain.GetMinHeight(), terrain.GetMaxHeight());
-				ImGui::SliderFloat("Specular Shininess", &waterShininess, 0.f, 100.f);
+				ImGui::SliderFloat("Water Level", &water.WaterHeight, terrain.GetMinHeight(), terrain.GetMaxHeight());
+				ImGui::SliderFloat("Specular Shininess", &water.WaterShininess, 0.f, 100.f);
 				ImGui::Checkbox("Enable Water", &waterEnabled);
-
-				water.WaterHeight = waterHeight;
-				water.WaterShininess = waterShininess;
 			}
 			ImGui::End();
 
@@ -575,10 +574,10 @@ int main()
 				
 
 				if (ImGui::Button("Recenter Camera")) {
-					camera.position.x = 0.0f;
-					camera.position.z = 0.0f;
-					mouseDragX = 0.0f;
-					mouseDragY = displayHeight;
+					camera.position.x = 0.f;
+					camera.position.z = 0.f;
+					mouseDeltaX = 0.f;
+					mouseDeltaY = displayHeight;
 				}
 			}
 			ImGui::End();

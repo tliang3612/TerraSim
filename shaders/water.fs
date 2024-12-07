@@ -8,9 +8,12 @@ out vec4 oFragColor;
 
 uniform float uMoveFactor;   
 uniform float uBrightness;
+
 uniform float uSunFalloff;
 uniform float uSunIntensity;
 uniform vec3 uLightDirection;  
+uniform vec3 uSunColor;
+
 uniform float uWaterShininess;
 uniform float uWaterHeight;
 uniform sampler2D uReflectionTexture; 
@@ -19,8 +22,7 @@ uniform sampler2D uDudvmap;
 uniform sampler2D uNormalmap;         
 uniform sampler2D uDepthmap;         
 
-const float reflectivity = 0.3f;    
-const vec3 sunlightColor = vec3(1.f, 0.9f, 0.7f);
+const float reflectivity = 0.2f;    
 const vec4 waterColor = vec4(0.f, 0.714f, 1.f, 0.2f); 
 const vec4 murkinessColor = vec4(0.f, 0.026f, 0.183f, 1.f);
 
@@ -40,7 +42,7 @@ vec3 CalculateSpecular(vec3 unitNormal, vec3 viewVector, float diffuseFactor) {
     //specular calculation
     vec3 reflectedLight = reflect(uLightDirection, unitNormal);
     float alignment = dot(reflectedLight, -viewVector); 
-    float shininessFactor = clamp(uWaterShininess / 100.f, 0.01f, 1.f); 
+    float shininessFactor = clamp(uWaterShininess / 50.f, 0.01f, 1.f); 
     float specular = smoothstep(1.f - shininessFactor, 1.f, alignment); 
 
     return (specular * vec3(1.f) * reflectivity);
@@ -54,11 +56,11 @@ void main() {
 
     //texture coordinates for reflection and refraction
     vec2 refractionTexCoords = vec2(ndc.x, ndc.y);
-    vec2 reflectionTexCoords = vec2(ndc.x, -ndc.y);
+    vec2 reflectionTexCoords = vec2(ndc.x, 1-ndc.y);
 
     //depth 
     float near = 1.f;
-    float far = 3000.f;
+    float far = 5000.f;
     float floorDepth = texture(uDepthmap, refractionTexCoords).r;
     float floorDistance = CalculateDepth(near, far, floorDepth);
     float waterDepth = gl_FragCoord.z;
@@ -67,11 +69,12 @@ void main() {
 
     //apply distortion 
     vec2 distortedTexCoords = ApplyDistortion();
-    vec2 totalDistortion = (texture(uDudvmap, distortedTexCoords).rg * 2.f - 1.f) * 0.04f;
+    vec2 totalDistortion = (texture(uDudvmap, distortedTexCoords).rg * 2.f - 1.f) * 0.02f;
     refractionTexCoords += totalDistortion;
     reflectionTexCoords += totalDistortion;
 
     refractionTexCoords = clamp(refractionTexCoords, 0.01f, 0.99f);
+
     reflectionTexCoords.x = clamp(reflectionTexCoords.x, 0.01f, 0.99f);
     reflectionTexCoords.y = clamp(reflectionTexCoords.y, -0.01f, -0.99f);
 
@@ -84,26 +87,26 @@ void main() {
 
     //calculate water normal and viewVector
     vec3 normalmapColor = texture(uNormalmap, distortedTexCoords).xyz;
-	vec3 unitNormal = normalize(vec3(normalmapColor.r * 2.f - 1.f, normalmapColor.b * 3.f, normalmapColor.g * 2.f - 1.f));
+	vec3 unitNormal = normalize(vec3(normalmapColor.r * 2.f - 1.f, normalmapColor.b * 2.f, normalmapColor.g * 2.f - 1.f));
 
     //refractive factor calculations
     vec3 viewVector = normalize(vVertexToCamera);
-    float refractiveFactor = pow(dot(viewVector, vec3(0.f, 1.f, 0.f)), .5f);
+    float refractiveFactor = dot(viewVector, vec3(0.f, 1.f, 0.f));
 
     //diffuse calculations
     float diffuseFactor = max(dot(unitNormal,uLightDirection), 0.f); //the more front facing towards light, the brighter
-	vec3 diffuse = sunlightColor.xyz * diffuseFactor * uBrightness;
+	vec3 diffuse = uSunColor.xyz * diffuseFactor * uBrightness;
 
     //specular factor calculations
     vec3 specularFactor = CalculateSpecular(unitNormal, viewVector, diffuseFactor);
 
     //sun highlight calculations
     float sunHighlight = pow(diffuseFactor, uSunFalloff * .25f);
-    vec3 sunlightEffect = sunlightColor * sunHighlight * uSunIntensity;
+    vec3 sunlightEffect = uSunColor * sunHighlight * uSunIntensity;
 
     vec3 totalLighting = max(ambient + diffuse + sunlightEffect, 0.f);
     vec4 color = mix(reflectionColor, refractionColor, refractiveFactor);
-    oFragColor = mix(color, waterColor, 0.2f) * vec4(totalLighting, 1.f) + vec4(specularFactor, 1.f);
+    oFragColor = mix(color, waterColor, 0.1f) * vec4(totalLighting, 1.f) + vec4(specularFactor, 1.f);
 
     //ensure alpha of water near the edges fade out
     oFragColor.a = clamp(depth / 10.f, 0.f, 1.f);

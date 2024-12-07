@@ -11,6 +11,7 @@ SkyboxShaderHandler::SkyboxShaderHandler() {
     uLightDirection = GetUniformLocation("uLightDirection");
     uSunFalloff = GetUniformLocation("uSunFalloff");
     uSunIntensity = GetUniformLocation("uSunIntensity");
+    uSunColor = GetUniformLocation("uSunColor");
     BindAttribute(0, "iPosition");
 }
 
@@ -28,5 +29,9 @@ void SkyboxShaderHandler::SetSunFalloff(float sunFalloff) {
 
 void SkyboxShaderHandler::SetSunIntensity(float sunIntensity) {
     LoadUniformFloat(uSunIntensity, sunIntensity);
+}
+
+void SkyboxShaderHandler::SetSunColor(glm::vec3 sunColor){
+    LoadUniformVec3(uSunColor, sunColor);
 }
 
