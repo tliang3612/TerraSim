@@ -8,21 +8,19 @@ out vec4 oFragColor;
 
 uniform float uMoveFactor;   
 uniform float uBrightness;
-
 uniform float uSunFalloff;
 uniform float uSunIntensity;
 uniform vec3 uLightDirection;  
-uniform vec3 uSunColor;
-
 uniform float uWaterShininess;
 uniform float uWaterHeight;
+uniform vec3 uSunColor;
 uniform sampler2D uReflectionTexture; 
 uniform sampler2D uRefractionTexture; 
 uniform sampler2D uDudvmap;          
 uniform sampler2D uNormalmap;         
 uniform sampler2D uDepthmap;         
 
-const float reflectivity = 0.2f;    
+const float reflectivity = 0.5f;    
 const vec4 waterColor = vec4(0.f, 0.714f, 1.f, 0.2f); 
 const vec4 murkinessColor = vec4(0.f, 0.026f, 0.183f, 1.f);
 
@@ -33,21 +31,21 @@ float CalculateDepth(float near, float far, float depthValue) {
 
 //apply distortion using dudv map
 vec2 ApplyDistortion() {
-    vec2 distorted = texture(uDudvmap, vec2(vTextureCoords.x + uMoveFactor, vTextureCoords.y)).rg * 0.1f;
+    vec2 distorted = texture(uDudvmap, vec2(vTextureCoords.x + uMoveFactor, vTextureCoords.y)).rg * 0.15f;
     return vec2(distorted.x, distorted.y + uMoveFactor);
 }
 
-//calculate specular and sun highlights
+//calculate specular
 vec3 CalculateSpecular(vec3 unitNormal, vec3 viewVector, float diffuseFactor) {
     //specular calculation
     vec3 reflectedLight = reflect(uLightDirection, unitNormal);
     float alignment = dot(reflectedLight, -viewVector); 
-    float shininessFactor = clamp(uWaterShininess / 50.f, 0.01f, 1.f); 
+    float shininessFactor = clamp(uWaterShininess / 100.f, 0.01f, 1.f); 
     float specular = smoothstep(1.f - shininessFactor, 1.f, alignment); 
+    vec3 specularColor =  mix(uSunColor, vec3(1.f), 0.6f);
 
-    return (specular * vec3(1.f) * reflectivity);
+    return (specular * specularColor * reflectivity);
 }
-
 
 void main() {
     vec3 ambient = waterColor.xyz * 0.5f;
@@ -56,10 +54,10 @@ void main() {
 
     //texture coordinates for reflection and refraction
     vec2 refractionTexCoords = vec2(ndc.x, ndc.y);
-    vec2 reflectionTexCoords = vec2(ndc.x, 1-ndc.y);
+    vec2 reflectionTexCoords = vec2(ndc.x, -ndc.y);
 
     //depth 
-    float near = 1.f;
+    float near = 10.f;
     float far = 5000.f;
     float floorDepth = texture(uDepthmap, refractionTexCoords).r;
     float floorDistance = CalculateDepth(near, far, floorDepth);
@@ -69,12 +67,11 @@ void main() {
 
     //apply distortion 
     vec2 distortedTexCoords = ApplyDistortion();
-    vec2 totalDistortion = (texture(uDudvmap, distortedTexCoords).rg * 2.f - 1.f) * 0.02f;
+    vec2 totalDistortion = (texture(uDudvmap, distortedTexCoords).rg * 2.f - 1.f) * 0.03f;
     refractionTexCoords += totalDistortion;
     reflectionTexCoords += totalDistortion;
 
     refractionTexCoords = clamp(refractionTexCoords, 0.01f, 0.99f);
-
     reflectionTexCoords.x = clamp(reflectionTexCoords.x, 0.01f, 0.99f);
     reflectionTexCoords.y = clamp(reflectionTexCoords.y, -0.01f, -0.99f);
 
@@ -82,20 +79,21 @@ void main() {
     vec4 refractionColor = texture(uRefractionTexture, refractionTexCoords);
 
     //murky water effect
-    float murkinessFactor = clamp(depth / 50.f, 0.f, 1.f);
+    float murkinessFactor = clamp(depth / 70.f, 0.f, 1.f);
     refractionColor = mix(refractionColor, murkinessColor, murkinessFactor);
 
     //calculate water normal and viewVector
     vec3 normalmapColor = texture(uNormalmap, distortedTexCoords).xyz;
-	vec3 unitNormal = normalize(vec3(normalmapColor.r * 2.f - 1.f, normalmapColor.b * 2.f, normalmapColor.g * 2.f - 1.f));
+	vec3 unitNormal = normalize(vec3(normalmapColor.r * 2.f - 1.f, normalmapColor.b * 3.f, normalmapColor.g * 2.f - 1.f));
 
     //refractive factor calculations
     vec3 viewVector = normalize(vVertexToCamera);
-    float refractiveFactor = dot(viewVector, vec3(0.f, 1.f, 0.f));
+    float refractiveFactor = pow(dot(viewVector, unitNormal), .5f);
+    refractiveFactor = clamp(refractiveFactor, 0.f, 1.f);
 
     //diffuse calculations
-    float diffuseFactor = max(dot(unitNormal,uLightDirection), 0.f); //the more front facing towards light, the brighter
-	vec3 diffuse = uSunColor.xyz * diffuseFactor * uBrightness;
+    float diffuseFactor = max(dot(unitNormal,normalize(uLightDirection)), 0.f); //the more front facing towards light, the brighter
+	vec3 diffuse = ambient * diffuseFactor * uBrightness;
 
     //specular factor calculations
     vec3 specularFactor = CalculateSpecular(unitNormal, viewVector, diffuseFactor);

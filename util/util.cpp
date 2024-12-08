@@ -47,6 +47,7 @@ namespace util {
         va_end(args);
 
         fprintf(stderr, "Error at %s\n", msg);
+        std::cerr << "Failed to load textures!" << std::endl;
         exit(EXIT_FAILURE);
     }
 }

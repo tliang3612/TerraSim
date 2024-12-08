@@ -14,7 +14,7 @@ uniform vec3 uLightDirection;
 
 
 void main(void) {
-	vec4 worldPosition = vec4(vec3(iPosition.x, uWaterHeight, iPosition.z), 1.0f);
+	vec4 worldPosition = vec4(vec3(iPosition.x, uWaterHeight, iPosition.z), 1.f);
 	vClipSpace = uViewProjection * worldPosition;
 	gl_Position = vClipSpace;
 	vTextureCoords = iTextureCoords;

@@ -106,7 +106,7 @@ void main() {
 
     //diffuse calculations
     float diffuseFactor = max(dot(unitNormal, uLightDirection), 0.f); //the more front facing towards light, the brighter
-	vec3 diffuse = uSunColor * diffuseFactor * uBrightness * (1.f - shadow);
+	vec3 diffuse = mix(vec3(1.f),uSunColor,.3f) * diffuseFactor * uBrightness * (1.f - shadow);
     
     //sun calculations
     float sunHighlight = pow(diffuseFactor, uSunFalloff * .25f);

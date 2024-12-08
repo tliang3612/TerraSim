@@ -1,45 +1,151 @@
-﻿  TerraSim.cpp
-C:\Users\broni\source\repos\TerraSim\heightmap.h(27,48): warning C4244: 'return': conversion from 'const int' to 'const float', possible loss of data
-  (compiling source file 'TerraSim.cpp')
+﻿  camera.cpp
+  cubemap.cpp
+  FastNoise.cpp
+  glm.cpp
+  imgui.cpp
+  imgui_demo.cpp
+  imgui_draw.cpp
+  imgui_impl_opengl3.cpp
+  imgui_impl_sdl2.cpp
+  imgui_impl_sdlrenderer2.cpp
+  imgui_impl_win32.cpp
+  imgui_stdlib.cpp
+  imgui_tables.cpp
+  imgui_widgets.cpp
+  tiny_obj_loader.cc
+  display.cpp
+  data_factory.cpp
+  heightmap.cpp
+C:\Users\broni\source\repos\TerraSim\terrain\heightmap.h(26,48): warning C4244: 'return': conversion from 'const int' to 'const float', possible loss of data
+  (compiling source file 'terrain/heightmap.cpp')
   
-C:\Users\broni\source\repos\TerraSim\sculptor.hpp(8,33): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-  (compiling source file 'TerraSim.cpp')
-  
-C:\Users\broni\source\repos\TerraSim\sculptor.hpp(17,20): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-  (compiling source file 'TerraSim.cpp')
-  
-C:\Users\broni\source\repos\TerraSim\sculptor.hpp(18,18): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-  (compiling source file 'TerraSim.cpp')
-  
-C:\Users\broni\source\repos\TerraSim\sculptor.hpp(19,20): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-  (compiling source file 'TerraSim.cpp')
-  
-C:\Users\broni\source\repos\TerraSim\sculptor.hpp(20,18): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-  (compiling source file 'TerraSim.cpp')
-  
-C:\Users\broni\source\repos\TerraSim\raycaster.hpp(26,111): warning C4244: 'argument': conversion from 'T' to 'int', possible loss of data
-C:\Users\broni\source\repos\TerraSim\raycaster.hpp(26,111): warning C4244:         with
-C:\Users\broni\source\repos\TerraSim\raycaster.hpp(26,111): warning C4244:         [
-C:\Users\broni\source\repos\TerraSim\raycaster.hpp(26,111): warning C4244:             T=float
-C:\Users\broni\source\repos\TerraSim\raycaster.hpp(26,111): warning C4244:         ]
-  (compiling source file 'TerraSim.cpp')
-  
-C:\Users\broni\source\repos\TerraSim\raycaster.hpp(26,92): warning C4244: 'argument': conversion from 'T' to 'int', possible loss of data
-C:\Users\broni\source\repos\TerraSim\raycaster.hpp(26,92): warning C4244:         with
-C:\Users\broni\source\repos\TerraSim\raycaster.hpp(26,92): warning C4244:         [
-C:\Users\broni\source\repos\TerraSim\raycaster.hpp(26,92): warning C4244:             T=float
-C:\Users\broni\source\repos\TerraSim\raycaster.hpp(26,92): warning C4244:         ]
-  (compiling source file 'TerraSim.cpp')
-  
-C:\Users\broni\source\repos\TerraSim\TerraSim.cpp(47,13): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\broni\source\repos\TerraSim\TerraSim.cpp(47,27): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\broni\source\repos\TerraSim\TerraSim.cpp(81,17): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\broni\source\repos\TerraSim\TerraSim.cpp(436,55): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\broni\source\repos\TerraSim\TerraSim.cpp(436,29): warning C4267: 'initializing': conversion from 'size_t' to 'const int', possible loss of data
+C:\Users\broni\source\repos\TerraSim\terrain\heightmap.cpp(99,30): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\broni\source\repos\TerraSim\terrain\heightmap.cpp(102,85): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   renderer.cpp
-C:\Users\broni\source\repos\TerraSim\heightmap.h(27,48): warning C4244: 'return': conversion from 'const int' to 'const float', possible loss of data
-  (compiling source file 'renderer.cpp')
+C:\Users\broni\source\repos\TerraSim\terrain\heightmap.h(26,48): warning C4244: 'return': conversion from 'const int' to 'const float', possible loss of data
+  (compiling source file 'engine/renderer.cpp')
   
+  shader_handler.cpp
+C:\Users\broni\source\repos\TerraSim\shader_handlers\shader_handler.cpp(39,13): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  Generating Code...
+  Compiling...
+  shadowmap_shader_handler.cpp
+  skybox_shader_handler.cpp
+  terrain_shader_handler.cpp
+  water_shader_handler.cpp
+  terrain.cpp
+C:\Users\broni\source\repos\TerraSim\terrain\heightmap.h(26,48): warning C4244: 'return': conversion from 'const int' to 'const float', possible loss of data
+  (compiling source file 'terrain/terrain.cpp')
+  
+C:\Users\broni\source\repos\TerraSim\terrain\terrain.cpp(13,29): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\broni\source\repos\TerraSim\terrain\terrain.cpp(98,113): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\broni\source\repos\TerraSim\terrain\terrain.cpp(99,115): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  TerraSim.cpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\filesystem(12): warning STL4038: The contents of <filesystem> are available only with C++17 or later.
+C:\Users\broni\source\repos\TerraSim\terrain\heightmap.h(26,48): warning C4244: 'return': conversion from 'const int' to 'const float', possible loss of data
+  (compiling source file 'TerraSim.cpp')
+  
+C:\Users\broni\source\repos\TerraSim\terrain\sculptor.hpp(8,33): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+  (compiling source file 'TerraSim.cpp')
+  
+C:\Users\broni\source\repos\TerraSim\terrain\sculptor.hpp(17,20): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+  (compiling source file 'TerraSim.cpp')
+  
+C:\Users\broni\source\repos\TerraSim\terrain\sculptor.hpp(18,18): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+  (compiling source file 'TerraSim.cpp')
+  
+C:\Users\broni\source\repos\TerraSim\terrain\sculptor.hpp(19,20): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+  (compiling source file 'TerraSim.cpp')
+  
+C:\Users\broni\source\repos\TerraSim\terrain\sculptor.hpp(20,18): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+  (compiling source file 'TerraSim.cpp')
+  
+C:\Users\broni\source\repos\TerraSim\raycasting\raycaster.hpp(26,111): warning C4244: 'argument': conversion from 'T' to 'int', possible loss of data
+C:\Users\broni\source\repos\TerraSim\raycasting\raycaster.hpp(26,111): warning C4244:         with
+C:\Users\broni\source\repos\TerraSim\raycasting\raycaster.hpp(26,111): warning C4244:         [
+C:\Users\broni\source\repos\TerraSim\raycasting\raycaster.hpp(26,111): warning C4244:             T=float
+C:\Users\broni\source\repos\TerraSim\raycasting\raycaster.hpp(26,111): warning C4244:         ]
+  (compiling source file 'TerraSim.cpp')
+  
+C:\Users\broni\source\repos\TerraSim\raycasting\raycaster.hpp(26,92): warning C4244: 'argument': conversion from 'T' to 'int', possible loss of data
+C:\Users\broni\source\repos\TerraSim\raycasting\raycaster.hpp(26,92): warning C4244:         with
+C:\Users\broni\source\repos\TerraSim\raycasting\raycaster.hpp(26,92): warning C4244:         [
+C:\Users\broni\source\repos\TerraSim\raycasting\raycaster.hpp(26,92): warning C4244:             T=float
+C:\Users\broni\source\repos\TerraSim\raycasting\raycaster.hpp(26,92): warning C4244:         ]
+  (compiling source file 'TerraSim.cpp')
+  
+C:\Users\broni\source\repos\TerraSim\TerraSim.cpp(61,13): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\broni\source\repos\TerraSim\TerraSim.cpp(61,27): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\broni\source\repos\TerraSim\TerraSim.cpp(93,17): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\broni\source\repos\TerraSim\TerraSim.cpp(449,23): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  util.cpp
   water.cpp
   Generating Code...
-  TerraSim.vcxproj -> C:\Users\broni\source\repos\TerraSim\x64\Debug\TerraSim.exe
+C:\Users\broni\source\repos\TerraSim\TerraSim.cpp(487,1): warning C4715: '`main'::`113'::<lambda_1>::operator()': not all control paths return a value
+  glad.c
+  stb_image.c
+  stb_image_write.c
+  tinyfd_moredialogs.c
+  tinyfiledialogs.c
+  Generating Code...
+libcpmtd.lib(wlocale.obj) : error LNK2001: unresolved external symbol _CrtDbgReport
+libcpmtd.lib(xlocale.obj) : error LNK2001: unresolved external symbol _CrtDbgReport
+libcpmtd.lib(thread0.obj) : error LNK2001: unresolved external symbol _CrtDbgReport
+libcpmtd.lib(cerr.obj) : error LNK2001: unresolved external symbol _CrtDbgReport
+libcpmtd.lib(locale.obj) : error LNK2001: unresolved external symbol _CrtDbgReport
+libcpmtd.lib(xtime.obj) : error LNK2001: unresolved external symbol _CrtDbgReport
+terrain.obj : error LNK2001: unresolved external symbol _CrtDbgReport
+TerraSim.obj : error LNK2001: unresolved external symbol _CrtDbgReport
+util.obj : error LNK2001: unresolved external symbol _CrtDbgReport
+water.obj : error LNK2001: unresolved external symbol _CrtDbgReport
+shadowmap_shader_handler.obj : error LNK2001: unresolved external symbol _CrtDbgReport
+skybox_shader_handler.obj : error LNK2001: unresolved external symbol _CrtDbgReport
+terrain_shader_handler.obj : error LNK2001: unresolved external symbol _CrtDbgReport
+water_shader_handler.obj : error LNK2001: unresolved external symbol _CrtDbgReport
+data_factory.obj : error LNK2001: unresolved external symbol _CrtDbgReport
+heightmap.obj : error LNK2001: unresolved external symbol _CrtDbgReport
+renderer.obj : error LNK2001: unresolved external symbol _CrtDbgReport
+shader_handler.obj : error LNK2001: unresolved external symbol _CrtDbgReport
+cubemap.obj : error LNK2001: unresolved external symbol _CrtDbgReport
+imgui_stdlib.obj : error LNK2001: unresolved external symbol _CrtDbgReport
+tiny_obj_loader.obj : error LNK2001: unresolved external symbol _CrtDbgReport
+display.obj : error LNK2001: unresolved external symbol _CrtDbgReport
+libcpmtd.lib(mutex.obj) : error LNK2001: unresolved external symbol _calloc_dbg
+libcpmtd.lib(cond.obj) : error LNK2001: unresolved external symbol _calloc_dbg
+libcpmtd.lib(wlocale.obj) : error LNK2001: unresolved external symbol _calloc_dbg
+libcpmtd.lib(xlocale.obj) : error LNK2001: unresolved external symbol _calloc_dbg
+tiny_obj_loader.obj : error LNK2001: unresolved external symbol _calloc_dbg
+TerraSim.obj : error LNK2001: unresolved external symbol _calloc_dbg
+libcpmtd.lib(_tolower.obj) : error LNK2001: unresolved external symbol _calloc_dbg
+libcpmtd.lib(locale.obj) : error LNK2001: unresolved external symbol _calloc_dbg
+libcpmtd.lib(StlCompareStringA.obj) : error LNK2001: unresolved external symbol _free_dbg
+libcpmtd.lib(cond.obj) : error LNK2001: unresolved external symbol _free_dbg
+libcpmtd.lib(wlocale.obj) : error LNK2001: unresolved external symbol _free_dbg
+libcpmtd.lib(xlocale.obj) : error LNK2001: unresolved external symbol _free_dbg
+libcpmtd.lib(xwcsxfrm.obj) : error LNK2001: unresolved external symbol _free_dbg
+libcpmtd.lib(cerr.obj) : error LNK2001: unresolved external symbol _free_dbg
+libcpmtd.lib(locale.obj) : error LNK2001: unresolved external symbol _free_dbg
+libcpmtd.lib(StlLCMapStringA.obj) : error LNK2001: unresolved external symbol _free_dbg
+libcpmtd.lib(mutex.obj) : error LNK2001: unresolved external symbol _free_dbg
+tiny_obj_loader.obj : error LNK2001: unresolved external symbol _free_dbg
+TerraSim.obj : error LNK2001: unresolved external symbol _free_dbg
+util.obj : error LNK2001: unresolved external symbol _free_dbg
+libcpmtd.lib(locale0.obj) : error LNK2001: unresolved external symbol _free_dbg
+libcpmtd.lib(xlocale.obj) : error LNK2001: unresolved external symbol _malloc_dbg
+libcpmtd.lib(xwcsxfrm.obj) : error LNK2001: unresolved external symbol _malloc_dbg
+libcpmtd.lib(StlCompareStringA.obj) : error LNK2001: unresolved external symbol _malloc_dbg
+libcpmtd.lib(cerr.obj) : error LNK2001: unresolved external symbol _malloc_dbg
+libcpmtd.lib(locale.obj) : error LNK2001: unresolved external symbol _malloc_dbg
+libcpmtd.lib(StlLCMapStringA.obj) : error LNK2001: unresolved external symbol _malloc_dbg
+libcpmtd.lib(wlocale.obj) : error LNK2001: unresolved external symbol _malloc_dbg
+tiny_obj_loader.obj : error LNK2001: unresolved external symbol _malloc_dbg
+TerraSim.obj : error LNK2001: unresolved external symbol _malloc_dbg
+util.obj : error LNK2001: unresolved external symbol _malloc_dbg
+libcpmtd.lib(locale0.obj) : error LNK2001: unresolved external symbol _malloc_dbg
+libcpmtd.lib(_tolower.obj) : error LNK2019: unresolved external symbol _wcsdup_dbg referenced in function _Getctype
+libcpmtd.lib(xstrcoll.obj) : error LNK2001: unresolved external symbol _wcsdup_dbg
+libcpmtd.lib(locale.obj) : error LNK2019: unresolved external symbol _realloc_dbg referenced in function "private: static void __cdecl std::locale::_Locimp::_Locimp_Addfac(class std::locale::_Locimp *,class std::locale::facet *,unsigned __int64)" (?_Locimp_Addfac@_Locimp@locale@std@@CAXPEAV123@PEAVfacet@23@_K@Z)
+libcpmtd.lib(StlLCMapStringA.obj) : error LNK2019: unresolved external symbol _CrtDbgReportW referenced in function _freea_crt
+libcpmtd.lib(xmbtowc.obj) : error LNK2001: unresolved external symbol _CrtDbgReportW
+libcpmtd.lib(StlCompareStringA.obj) : error LNK2001: unresolved external symbol _CrtDbgReportW
+C:\Users\broni\source\repos\TerraSim\x64\Debug\TerraSim.exe : fatal error LNK1120: 7 unresolved externals

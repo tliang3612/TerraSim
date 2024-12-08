@@ -1,28 +1,41 @@
 #include <glad/glad.h>
 #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <thread>
+#include <filesystem>
+
 #include <imgui/imgui.h>
-#include <SDL.h>
 #include <imgui/imgui_impl_sdl2.h>
 #include <imgui/imgui_impl_opengl3.h>
+
+
+#include <SDL.h>
+
 #include <glm/ext/matrix_clip_space.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include <tinyfiledialogs/tinyfiledialogs.h>
-#include "renderer.h"
-#include "terrain.h"
-#include "water.h"
-#include "data_factory.h"
+
+#include "engine/renderer.h"
+#include "engine/data_factory.h"
+
+#include "terrain/terrain.h"
+#include "terrain/sculptor.hpp"
+
+#include "effects/water.h"
+#include "effects/shadowmap.hpp"
+#include "effects/light.hpp"
+
+#include "camera/camera.h"
+
+#include "raycasting/raycaster.hpp"
+
 #include "shader_handlers/terrain_shader_handler.h"
 #include "shader_handlers/shadowmap_shader_handler.h"
 #include "shader_handlers/skybox_shader_handler.h"
 #include "shader_handlers/water_shader_handler.h"
-#include "camera.h"
-#include "sculptor.hpp"
-#include "raycaster.hpp"
-#include "shadowmap.hpp"
-#include "light.hpp"
-#include <fstream>
-#include <sstream>
-#include <thread>
-#include <glm/gtc/type_ptr.hpp>
+
 #undef main // Fixes weird SDL issue
 
 int main()
@@ -59,32 +72,37 @@ int main()
 
 
 	//load the textures
+	std::string workingDirectory = std::filesystem::current_path().string();
+	std::replace(workingDirectory.begin(), workingDirectory.end(), '\\', '/');
 	static float texScaleVal = 25.f;
-	GLuint textureID1 = dataFactory.LoadTexture("resources/Base.png");
-	GLuint textureID2 = dataFactory.LoadTexture("resources/Ground.png");
-	GLuint textureID3 = dataFactory.LoadTexture("resources/Rock.png");
-	GLuint textureID4 = dataFactory.LoadTexture("resources/Peaks.png");
+	GLuint textureID1 = dataFactory.LoadTexture(workingDirectory + "/resources/Base.png");
+	GLuint textureID2 = dataFactory.LoadTexture(workingDirectory + "/resources/Ground.png");
+	GLuint textureID3 = dataFactory.LoadTexture(workingDirectory + "/resources/Rock.png");
+	GLuint textureID4 = dataFactory.LoadTexture(workingDirectory + "/resources/Peaks.png");
 	std::vector<GLuint> textureIDs = { textureID1, textureID2, textureID3, textureID4 };
 
 	GLuint skyboxTextureID = dataFactory.LoadCubemapTexture({
-		"resources/skybox/right.png",
-		"resources/skybox/left.png",
-		"resources/skybox/top.png",
-		"resources/skybox/bottom.png",
-		"resources/skybox/back.png",
-		"resources/skybox/front.png"
+		workingDirectory + "/resources/skybox/right.png",
+		workingDirectory + "/resources/skybox/left.png",
+		workingDirectory + "/resources/skybox/top.png",
+		workingDirectory + "/resources/skybox/bottom.png",
+		workingDirectory + "/resources/skybox/back.png",
+		workingDirectory + "/resources/skybox/front.png"
 	});	
 
-	GLuint dudvMapTextureID = dataFactory.LoadTexture("resources/water/waterNormal.png");
-	GLuint normalmapTextureID = dataFactory.LoadTexture("resources/water/waterDUDV.png");
+	GLuint dudvMapTextureID = dataFactory.LoadTexture(workingDirectory + "/resources/water/waterNormal.png");
+	GLuint normalmapTextureID = dataFactory.LoadTexture(workingDirectory + "/resources/water/waterDUDV.png");
 	
-	float size = 256.f;
-	int resolution = size * 2;
+	//terrain size
+	static int terrainSize = 256;
+	static int oldTerrainSize = terrainSize;
+	int terrainResolution = terrainSize * 2;
 
 	//Terrain logic
+	float noiseSeed = time(nullptr);
 	TerrainFactory terrainFactory = TerrainFactory();
-	Terrain terrain = terrainFactory.GenerateTerrain(dataFactory, size, resolution, textureIDs);
-	Heightmap& heightmap = terrain.GetHeightmap();
+	Terrain terrain = terrainFactory.GenerateTerrain(dataFactory, terrainSize, terrainResolution, textureIDs, noiseSeed);
+	std::shared_ptr<Heightmap> heightmap = terrain.GetHeightmap();
 
 
 	//Skybox logic
@@ -93,7 +111,7 @@ int main()
 
 	//Water logic
 	WaterFactory waterFactory = WaterFactory();
-	Water water = waterFactory.GenerateWater(dataFactory, dudvMapTextureID, normalmapTextureID, size, displayWidth, displayHeight);
+	Water water = waterFactory.GenerateWater(dataFactory, dudvMapTextureID, normalmapTextureID, terrainSize, displayWidth, displayHeight);
 
 	//for shadowmap
 	static bool shadowmapDirty = true;
@@ -103,8 +121,8 @@ int main()
 	static bool waterEnabled = true;
 
 	//for terrain
-	static float amplitude = heightmap.Amplitude;
-	static float frequency = heightmap.Frequency;
+	static float amplitude = heightmap->Amplitude;
+	static float frequency = heightmap->Frequency;
 
 	auto deltaTimeCounter = SDL_GetPerformanceCounter(); //record the deltaTime counter
 	auto fpsCounter = SDL_GetPerformanceCounter(); //record the fps counter
@@ -319,23 +337,39 @@ int main()
 				ImGui::Combo("Noise Type", &noiseType, noiseTypes, sizeof(noiseTypes) / sizeof(noiseTypes[0]));
 
 				bool amplitudeChanged = ImGui::SliderFloat("Amplitude", &amplitude, 0.f, 100.f);
-				bool frequencyChanged = ImGui::SliderFloat("frequency", &frequency, 0.f, 1.f);
+				bool frequencyChanged = ImGui::SliderFloat("Frequency", &frequency, 0.f, 1.f);
 
+				ImGui::SliderInt("Terrain Size", &terrainSize, 0, 1000);
+
+				static bool keepSeed = true;
+				ImGui::Checkbox("Keep Noise Seed", &keepSeed);
+
+				float noiseSeed = rand();
+				if (keepSeed) {
+					noiseSeed = heightmap->GetNoiseSeed();
+				}
 
 				if (amplitudeChanged || frequencyChanged) {
-					heightmap.Amplitude = amplitude;
-					heightmap.Frequency = frequency;
-					heightmap.GenerateHeightsUsingNoise(noiseType, false);
-					heightmap.Update();
+					heightmap->Amplitude = amplitude;
+					heightmap->Frequency = frequency;
+					heightmap->GenerateHeightsUsingNoise(noiseType, heightmap->GetNoiseSeed());
+					heightmap->Update();
 				}
 
 				if (ImGui::Button("Generate Terrain")) {
-					heightmap.Amplitude = amplitude;
-					heightmap.Frequency = frequency;
-					heightmap.GenerateHeightsUsingNoise(noiseType, true);
-					heightmap.Update();
+					if (oldTerrainSize != terrainSize) {
+						oldTerrainSize = terrainSize;
+						terrain = terrainFactory.GenerateTerrain(dataFactory, terrainSize, terrainSize * 2, terrain.GetTextureIDs(), noiseSeed);
+						water = waterFactory.GenerateWater(dataFactory, dudvMapTextureID, normalmapTextureID, terrainSize, displayWidth, displayHeight);
+						heightmap = terrain.GetHeightmap();
+					}
+					else {
+						heightmap->Amplitude = amplitude;
+						heightmap->Frequency = frequency;
+						heightmap->GenerateHeightsUsingNoise(noiseType, noiseSeed);
+						heightmap->Update();
+					}
 				}
-
 
 				ImGui::PopItemWidth();
 			}
@@ -432,21 +466,21 @@ int main()
 								return 0;
 							}
 
-							float step = (2.f * size) / (resolution - 1);
+							float step = (2.f * terrainSize) / (terrainResolution - 1);
 
 							//for progress bar
-							int totalSteps = resolution * resolution + indices.size() / 3;
+							int totalSteps = terrainResolution * terrainResolution + indices.size() / 3;
 							int currentStep = 0;
 
-							for (int z = 0; z < resolution; z++) {
-								for (int x = 0; x < resolution; ++x) {
-									float posX = -size + x * step;
-									float posZ = -size + z * step;
-									float posY = heightmap.GetHeight(x, z); //height from heightmap
+							for (int z = 0; z < terrainResolution; z++) {
+								for (int x = 0; x < terrainResolution; ++x) {
+									float posX = -terrainSize + x * step;
+									float posZ = -terrainSize + z * step;
+									float posY = heightmap->GetHeight(x, z); //height from heightmap
 									output << "v " << posX << " " << posY << " " << posZ << "\n";
 
-									float u = float(x) / (resolution - 1);
-									float v = float(z) / (resolution - 1);
+									float u = float(x) / (terrainResolution - 1);
+									float v = float(z) / (terrainResolution - 1);
 									output << "vt " << u << " " << v << "\n";
 
 									//progress update
@@ -549,7 +583,7 @@ int main()
 
 
 				ImGui::SliderFloat("Water Level", &water.WaterHeight, terrain.GetMinHeight(), terrain.GetMaxHeight());
-				ImGui::SliderFloat("Specular Shininess", &water.WaterShininess, 0.f, 100.f);
+				ImGui::SliderFloat("Specularity", &water.WaterShininess, 0.f, 100.f);
 				ImGui::Checkbox("Enable Water", &waterEnabled);
 			}
 			ImGui::End();

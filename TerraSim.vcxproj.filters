@@ -18,7 +18,7 @@
     <ClCompile Include="TerraSim.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="display.cpp">
+    <ClCompile Include="engine\display.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="util\util.cpp">
@@ -72,16 +72,16 @@
     <ClCompile Include="Dependencies\libs\tinyobjloader\tiny_obj_loader.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="renderer.cpp">
+    <ClCompile Include="engine\renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="terrain.cpp">
+    <ClCompile Include="terrain\terrain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="data_factory.cpp">
+    <ClCompile Include="engine\data_factory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="camera.cpp">
+    <ClCompile Include="camera\camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Dependencies\libs\tinyfiledialogs\tinyfiledialogs.c">
@@ -90,7 +90,7 @@
     <ClCompile Include="Dependencies\libs\tinyfiledialogs\more_dialogs\tinyfd_moredialogs.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="cubemap.cpp">
+    <ClCompile Include="effects\cubemap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="shader_handlers\shader_handler.cpp">
@@ -105,18 +105,18 @@
     <ClCompile Include="shader_handlers\terrain_shader_handler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="water.cpp">
+    <ClCompile Include="effects\water.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="shader_handlers\water_shader_handler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="heightmap.cpp">
+    <ClCompile Include="terrain\heightmap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="display.h">
+    <ClInclude Include="engine\display.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="util\util.h">
@@ -1145,22 +1145,22 @@
     <ClInclude Include="Dependencies\SDL2\include\SDL_vulkan.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="renderer.h">
+    <ClInclude Include="engine\renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="terrain.h">
+    <ClInclude Include="terrain\terrain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="data_factory.h">
+    <ClInclude Include="engine\data_factory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="camera.h">
+    <ClInclude Include="camera\camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Dependencies\libs\tinyfiledialogs\tinyfiledialogs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="sculptor.hpp">
+    <ClInclude Include="terrain\sculptor.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Dependencies\libs\tinyfiledialogs\more_dialogs\tinyfd_moredialogs.h">
@@ -1205,13 +1205,13 @@
     <ClInclude Include="Dependencies\SDL2\include\SDL_copying.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="raycaster.hpp">
+    <ClInclude Include="raycasting\raycaster.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="cubemap.h">
+    <ClInclude Include="effects\cubemap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="light.hpp">
+    <ClInclude Include="effects\light.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="shader_handlers\shader_handler.h">
@@ -1226,16 +1226,16 @@
     <ClInclude Include="shader_handlers\terrain_shader_handler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="shadowmap.hpp">
+    <ClInclude Include="effects\shadowmap.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="water.h">
+    <ClInclude Include="effects\water.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="shader_handlers\water_shader_handler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="heightmap.h">
+    <ClInclude Include="terrain\heightmap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
