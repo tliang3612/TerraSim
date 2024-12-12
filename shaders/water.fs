@@ -21,8 +21,8 @@ uniform sampler2D uNormalmap;
 uniform sampler2D uDepthmap;         
 
 const float reflectivity = 0.5f;    
-const vec4 waterColor = vec4(0.f, 0.714f, 1.f, 0.2f); 
-const vec4 murkinessColor = vec4(0.f, 0.026f, 0.183f, 1.f);
+const vec4 waterColor = vec4(0.229f, 0.808f, 0.922f, 1.f);
+const vec4 murkinessColor = vec4(0.02f, 0.05f, 0.2f, 1.f); // Slightly less murky
 
 //calculate depth 
 float CalculateDepth(float near, float far, float depthValue) {
@@ -36,7 +36,7 @@ vec2 ApplyDistortion() {
 }
 
 //calculate specular
-vec3 CalculateSpecular(vec3 unitNormal, vec3 viewVector, float diffuseFactor) {
+vec3 CalculateSpecular(vec3 unitNormal, vec3 viewVector) {
     //specular calculation
     vec3 reflectedLight = reflect(uLightDirection, unitNormal);
     float alignment = dot(reflectedLight, -viewVector); 
@@ -44,7 +44,7 @@ vec3 CalculateSpecular(vec3 unitNormal, vec3 viewVector, float diffuseFactor) {
     float specular = smoothstep(1.f - shininessFactor, 1.f, alignment); 
     vec3 specularColor =  mix(uSunColor, vec3(1.f), 0.6f);
 
-    return (specular * specularColor * reflectivity);
+    return (specular * specularColor * reflectivity  * uSunIntensity * 1.5f);
 }
 
 void main() {
@@ -96,7 +96,7 @@ void main() {
 	vec3 diffuse = ambient * diffuseFactor * uBrightness;
 
     //specular factor calculations
-    vec3 specularFactor = CalculateSpecular(unitNormal, viewVector, diffuseFactor);
+    vec3 specularFactor = CalculateSpecular(unitNormal, viewVector);
 
     //sun highlight calculations
     float sunHighlight = pow(diffuseFactor, uSunFalloff * .25f);

@@ -30,6 +30,8 @@ private:
 	float m_size;
 	int m_width;
 	int m_height;
+	int m_scaledWidth;
+	int m_scaledHeight;
 
 	GLuint m_reflectionFboID;
 	GLuint m_reflectionTextureID;

@@ -28,7 +28,7 @@ vec3 CalculateSurfaceNormal(vec2 uv) {
 }
 
 void main() {
-	vec4 worldPosition = vec4(iPosition + vec3(0.0f, texture(uHeightmap, iTextureCoords).r, 0.0f), 1.0f);
+	vec4 worldPosition = vec4(iPosition + vec3(0.f, texture(uHeightmap, iTextureCoords).r, 0.f), 1.f);
 	gl_Position =  uViewProjection * worldPosition;
 	gl_ClipDistance[0] = dot(worldPosition, uClip);
 	vPosition = worldPosition.xyz;

@@ -5,18 +5,21 @@ Water::Water(Model model, DataFactory dataFactory, GLuint dudvMapTextureID, GLui
 
 	//init the reflection and refraction fbos and textures
 
+	m_scaledWidth = m_width / 3;
+	m_scaledHeight = m_height / 3;
+
 	m_reflectionFboID = dataFactory.CreateFBO();
 	glBindFramebuffer(GL_FRAMEBUFFER, m_reflectionFboID);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0);
-	m_reflectionTextureID = CreateTextureAttachment(dataFactory, m_width, m_height);
-	m_reflectionDepthTextureID = CreateDepthTextureAttachment(dataFactory, m_width, m_height);
+	m_reflectionTextureID = CreateTextureAttachment(dataFactory, m_scaledWidth, m_scaledHeight);
+	m_reflectionDepthTextureID = CreateDepthTextureAttachment(dataFactory, m_scaledWidth, m_scaledHeight);
 	UnbindFramebuffer();
 
 	m_refractionFboID = dataFactory.CreateFBO();
 	glBindFramebuffer(GL_FRAMEBUFFER, m_refractionFboID);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0);
-	m_refractionTextureID = CreateTextureAttachment(dataFactory, m_width, m_height);
-	m_refractionDepthTextureID = CreateDepthTextureAttachment(dataFactory, m_width, m_height);
+	m_refractionTextureID = CreateTextureAttachment(dataFactory, m_scaledWidth, m_scaledHeight);
+	m_refractionDepthTextureID = CreateDepthTextureAttachment(dataFactory, m_scaledWidth, m_scaledHeight);
 	UnbindFramebuffer();
 	
 }
@@ -26,7 +29,7 @@ void Water::BindFramebuffer(int frameBufferType) {
 	GLuint fboID = frameBufferType == 0 ? m_reflectionFboID : m_refractionFboID;
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, fboID);
-	glViewport(0, 0, m_width, m_height);
+	glViewport(0, 0, m_scaledWidth, m_scaledHeight);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_CLIP_DISTANCE0);
 }

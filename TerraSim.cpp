@@ -128,7 +128,7 @@ int main()
 	auto fpsCounter = SDL_GetPerformanceCounter(); //record the fps counter
 	auto ticksFrequency = SDL_GetPerformanceFrequency(); //performance counter ticks per second
 	float fps = 0;
-	float targetFrameTime = 1000.f / 325.f; //cap frame rate at 265. This is to ensure that extra resources aren't wasted on this application. Might Change
+	const float maxDeltaTime = 1000.f / 250.f; //cap frame rate at 250. This is to ensure that extra resources aren't wasted on this application.
 	bool shouldRun = true;
 
 	while (shouldRun) {
@@ -137,6 +137,21 @@ int main()
 		auto currentCounter = SDL_GetPerformanceCounter(); //ticks as of now
 		float deltaTime = static_cast<float>(currentCounter - deltaTimeCounter) / ticksFrequency; //difference between start and current ticks. Divide by frequency to get seconds
 		deltaTimeCounter = currentCounter; //set start ticks to current ticks
+
+		static int frameCount = 0; //increment frames
+		float fpsElapsedTime = static_cast<float>(currentCounter - fpsCounter) / ticksFrequency; //delta time for fps calculations. Needs to be different var because fpsCounter 
+		//will only update every 0.2s rather than each frame
+		frameCount++; //increment frames
+		if (fpsElapsedTime > 0.2f) { //update fps every .2s
+			fps = (float)frameCount / fpsElapsedTime;
+			fpsCounter = currentCounter;
+			frameCount = 0;
+		}
+
+		//frames are moving too fast. pause until desired time 
+		if (deltaTime < maxDeltaTime) {
+			SDL_Delay(static_cast<Uint32>(maxDeltaTime - deltaTime));
+		}
 
 		SDL_Event e;
 		while (SDL_PollEvent(&e)) {
@@ -199,7 +214,7 @@ int main()
 		moveFactor += water.WaveSpeed * deltaTime;
 		if (moveFactor > 1.f) moveFactor = 0.f;
 		glm::vec4 reflectionClip = glm::vec4(0.f, 1.f, 0.f, -water.WaterHeight);
-		glm::vec4 refractionClip = glm::vec4(0.f, -1.f, 0.f, water.WaterHeight);
+		glm::vec4 refractionClip = glm::vec4(0.f, -1.f, 0.f, water.WaterHeight + 12.f);
 		glm::vec4 defaultClip = glm::vec4(0.f);
 
 		//render terrain to shadowmap if light has moved (shadowmapDirty)
@@ -237,11 +252,6 @@ int main()
 			
 			//refraction pass
 			water.BindFramebuffer(1);
-
-			skyboxShaderHandler.Enable();
-			skyboxShaderHandler.SetViewProjection(projectionMatrix * glm::mat4(glm::mat3(viewMatrix)));
-			renderer.RenderSkybox(skybox, skyboxShaderHandler);
-			skyboxShaderHandler.Disable();
 
 			terrainShaderHandler.Enable();
 			terrainShaderHandler.SetClip(refractionClip);
@@ -339,7 +349,8 @@ int main()
 				bool amplitudeChanged = ImGui::SliderFloat("Amplitude", &amplitude, 0.f, 100.f);
 				bool frequencyChanged = ImGui::SliderFloat("Frequency", &frequency, 0.f, 1.f);
 
-				ImGui::SliderInt("Terrain Size", &terrainSize, 0, 1000);
+				ImGui::InputInt("Terrain Size", &terrainSize);
+				terrainSize = std::clamp(terrainSize, 0, 1000);
 
 				static bool keepSeed = true;
 				ImGui::Checkbox("Keep Noise Seed", &keepSeed);
@@ -589,15 +600,6 @@ int main()
 			ImGui::End();
 
 			ImGui::Begin("Debug"); {
-			    static int frameCount = 0; //increment frames
-				float fpsElapsedTime = static_cast<float>(SDL_GetPerformanceCounter() - fpsCounter) / ticksFrequency; //delta time for fps calculations. Needs to be different var because fpsCounter 
-				//will only update every 0.1s rather than each frame
-				frameCount++; //increment frames
-				if (fpsElapsedTime > 0.1f) { //update fps every .1s
-					fps = (float)frameCount / fpsElapsedTime;
-					fpsCounter = currentCounter;
-					frameCount = 0;
-				}
 
 				ImGui::Text("FPS: %f", fps);
 				ImGui::Text("Camera X: %f", camera.position.x);
@@ -621,10 +623,7 @@ int main()
 		renderer.RenderImGuiFrame();
 		renderer.Update();
 
-		//frames are moving too fast. pause until desired time 
-		if (deltaTime < targetFrameTime) {
-			SDL_Delay(static_cast<Uint32>(targetFrameTime - deltaTime));
-		}
+
 	}
 	terrainShaderHandler.Destroy();
 	dataFactory.DeleteDataObjects();

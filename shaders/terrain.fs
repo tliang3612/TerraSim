@@ -76,7 +76,7 @@ float CalculateShadow(){
 
     lightSpacePosition = lightSpacePosition * 0.5f + 0.5f; //[0,1]
     float currentDepth = lightSpacePosition.z;
-    float bias = max(0.025f * (1.0f - dot(normalize(vNormal), uLightDirection)), 0.001f); //the more front facing towards light, the more bias. reduces shadow acne
+    float bias = max(0.025f * (1.f - dot(normalize(vNormal), uLightDirection)), 0.001f); //the more front facing towards light, the more bias. reduces shadow acne
 
 	// smoother shadows using PCF
 	int radius = 2;
