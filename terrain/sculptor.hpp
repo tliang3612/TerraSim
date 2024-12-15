@@ -80,6 +80,6 @@ struct Sculptor {
 
     static float Logarithmic(float distance, float maxRadius, float minRadius) {
         float linear = glm::clamp(1.f - (distance - minRadius) / (maxRadius - minRadius), 0.f, 1.f);
-        return glm::log(1.f + linear * 9.f) / glm::log(10.f); //gradual effect 
+        return glm::log(1.f + glm::pow(linear, .75f) * 9.f) / glm::log(10.f); //gradual effect 
     }
 };

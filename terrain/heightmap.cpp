@@ -18,7 +18,6 @@ Heightmap::Heightmap(float size, int resolution, float noiseSeed, DataFactory da
 //generates height values using noise
 void Heightmap::GenerateHeightsUsingNoise(int noiseType, float noiseSeed) {
     if (noiseSeed != m_noiseSeed) {
-        std::cout << 1;
         m_noise.SetSeed(noiseSeed);
         m_noiseSeed = noiseSeed;
     }
@@ -106,7 +105,7 @@ float Heightmap::fBm(glm::vec2 position) {
             ridgeNoise = 4.f * glm::pow(ridgeNoise, 3); // valleys
         }
         else {
-            ridgeNoise = (ridgeNoise - 1.f) * glm::pow((2.f * ridgeNoise - 2.f), 2) + 1.f; // peaks
+            ridgeNoise = (ridgeNoise - 1.f) * glm::pow((2.f * ridgeNoise - 2.f), 2) + 1.f; //peaks
         }
 
         accumulatedNoise += ridgeNoise * amplitude * prev;
@@ -120,7 +119,8 @@ float Heightmap::fBm(glm::vec2 position) {
 
     float maxDistance = std::sqrt(2.f);
     float distance = glm::length(position);
-    float falloff = glm::clamp(1.f - distance / maxDistance, 0.f, 1.f); // create mountain ranges more towards the middle
+    float linear = glm::clamp(1.f - distance / maxDistance, 0.f, 1.f); // create mountain ranges more towards the middle
+    float falloff = linear* linear* (3 - 2 * linear); //smooth interpolation
     return accumulatedNoise * falloff;
 }
 

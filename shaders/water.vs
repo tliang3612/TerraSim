@@ -1,4 +1,6 @@
-#version 400 core
+#version 330 core
+
+precision highp float;
 
 in vec3 iPosition;
 in vec2 iTextureCoords;

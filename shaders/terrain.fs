@@ -1,4 +1,4 @@
-#version 400 core
+#version 330 core
 
 // Input from the vertex shader
 in vec3 vPosition;   // World position of the fragment
@@ -79,10 +79,10 @@ float CalculateShadow(){
     float bias = max(0.025f * (1.f - dot(normalize(vNormal), uLightDirection)), 0.001f); //the more front facing towards light, the more bias. reduces shadow acne
 
 	// smoother shadows using PCF
-	int radius = 2;
+	int radius = 3;
     float totalSamples = 0.f;
 
-	vec2 texelSize = 1.0 / textureSize(uShadowmap, 0);
+	vec2 texelSize = 1 / textureSize(uShadowmap, 0);
 	for(int x = -radius; x <= radius;x++){
 		for(int y = -radius; y <= radius; y++){
             vec2 offset = vec2(x, y) * texelSize;

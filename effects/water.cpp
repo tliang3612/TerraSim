@@ -5,15 +5,8 @@ Water::Water(Model model, DataFactory dataFactory, GLuint dudvMapTextureID, GLui
 
 	//init the reflection and refraction fbos and textures
 
-	m_scaledWidth = m_width / 3;
-	m_scaledHeight = m_height / 3;
-
-	m_reflectionFboID = dataFactory.CreateFBO();
-	glBindFramebuffer(GL_FRAMEBUFFER, m_reflectionFboID);
-	glDrawBuffer(GL_COLOR_ATTACHMENT0);
-	m_reflectionTextureID = CreateTextureAttachment(dataFactory, m_scaledWidth, m_scaledHeight);
-	m_reflectionDepthTextureID = CreateDepthTextureAttachment(dataFactory, m_scaledWidth, m_scaledHeight);
-	UnbindFramebuffer();
+	m_scaledWidth = m_width / 4;
+	m_scaledHeight = m_height / 4;
 
 	m_refractionFboID = dataFactory.CreateFBO();
 	glBindFramebuffer(GL_FRAMEBUFFER, m_refractionFboID);
@@ -21,6 +14,14 @@ Water::Water(Model model, DataFactory dataFactory, GLuint dudvMapTextureID, GLui
 	m_refractionTextureID = CreateTextureAttachment(dataFactory, m_scaledWidth, m_scaledHeight);
 	m_refractionDepthTextureID = CreateDepthTextureAttachment(dataFactory, m_scaledWidth, m_scaledHeight);
 	UnbindFramebuffer();
+
+	m_reflectionFboID = dataFactory.CreateFBO();
+	glBindFramebuffer(GL_FRAMEBUFFER, m_reflectionFboID);
+	glDrawBuffer(GL_COLOR_ATTACHMENT0);
+	m_reflectionTextureID = CreateTextureAttachment(dataFactory, m_scaledWidth, m_scaledHeight);
+	UnbindFramebuffer();
+
+
 	
 }
 
@@ -43,19 +44,19 @@ void Water::UnbindFramebuffer() {
 GLuint Water::CreateTextureAttachment(DataFactory dataFactory, int width, int height){
 	GLuint textureID = dataFactory.CreateTexture();
 	glBindTexture(GL_TEXTURE_2D, textureID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureID, 0);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textureID, 0);
 	return textureID;
 }
 
 GLuint Water::CreateDepthTextureAttachment(DataFactory dataFactory, int width, int height){
 	GLuint textureID = dataFactory.CreateTexture();
 	glBindTexture(GL_TEXTURE_2D, textureID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

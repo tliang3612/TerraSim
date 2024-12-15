@@ -75,8 +75,8 @@
     <LibraryPath>$(ProjectDir)\Dependencies\SDL2\lib;$(ProjectDir)\Dependencies\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\Users\broni\source\repos\TerraSim\Dependencies\SDL2\include;C:\Users\broni\source\repos\TerraSim\Dependencies\libs;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\broni\source\repos\TerraSim\Dependencies\SDL2\lib;C:\Users\broni\source\repos\TerraSim\Dependencies\libs;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)\Dependencies\SDL2\include;$(ProjectDir)\Dependencies\libs;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)\Dependencies\SDL2\lib;$(ProjectDir)\Dependencies\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -138,7 +138,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\broni\source\repos\TerraSim\Dependencies\SDL2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)\Dependencies\SDL2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>user32.lib;shell32.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -689,7 +689,7 @@
     <None Include="Dependencies\libs\glm\gtx\vector_query.inl" />
     <None Include="Dependencies\libs\glm\gtx\wrap.inl" />
     <None Include="imgui.ini" />
-    <None Include="opengl32.dll" />
+    <None Include="OpenGL.dll" />
     <None Include="README.md" />
     <None Include="SDL2.dll" />
     <None Include="shaders\shadowmap.fs" />
@@ -703,6 +703,12 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="LICENSE.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\Base.png" />
+    <Image Include="resources\Ground.png" />
+    <Image Include="resources\Peaks.png" />
+    <Image Include="resources\Rock.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

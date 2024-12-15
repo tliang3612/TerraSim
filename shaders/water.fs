@@ -1,4 +1,6 @@
-#version 400 core
+#version 330 core
+
+precision highp float;
 
 in vec2 vTextureCoords;
 in vec4 vClipSpace;

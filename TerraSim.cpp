@@ -40,9 +40,9 @@
 
 int main()
 {
-	const int displayWidth = 1280;
-	const int displayHeight = 720;
-	Renderer renderer = Renderer("TerraSim Prototype", displayWidth, displayHeight);
+	const int displayWidth = 1366;
+	const int displayHeight = 768;
+	Renderer renderer = Renderer("TerraSim", displayWidth, displayHeight);
 
 	//create the camera
 	Camera camera = Camera(glm::vec3(0.f, 300.f, 0.f), 0.f, 0.f, 0.f);
@@ -242,12 +242,6 @@ int main()
 			skyboxShaderHandler.SetViewProjection(projectionMatrix * glm::mat4(glm::mat3(waterViewMatrix)));
 			renderer.RenderSkybox(skybox, skyboxShaderHandler);
 			skyboxShaderHandler.Disable();
-
-			terrainShaderHandler.Enable();
-			terrainShaderHandler.SetClip(reflectionClip);
-			terrainShaderHandler.SetViewProjection((projectionMatrix * waterViewMatrix));
-			renderer.RenderTerrain(terrain, terrainShaderHandler, shadowmap);
-			terrainShaderHandler.Disable();
 			water.UnbindFramebuffer();
 			
 			//refraction pass
@@ -583,7 +577,7 @@ int main()
 					ImGui::Text(textureNames[i].c_str());
 				}
 
-				ImGui::SliderFloat("Texture Scale", &texScaleVal, 10.f, 300.f);
+				ImGui::SliderFloat("Texture Scale", &texScaleVal, 1.f, 100.f);
 
 				ImGui::PopItemWidth();
 			}

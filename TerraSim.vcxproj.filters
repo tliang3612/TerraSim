@@ -1645,7 +1645,6 @@
     <None Include="imgui.ini" />
     <None Include="README.md" />
     <None Include="SDL2.dll" />
-    <None Include="opengl32.dll" />
     <None Include="shaders\shadowmap.fs" />
     <None Include="shaders\shadowmap.vs" />
     <None Include="shaders\skybox.fs" />
@@ -1654,8 +1653,23 @@
     <None Include="shaders\terrain.vs" />
     <None Include="shaders\water.fs" />
     <None Include="shaders\water.vs" />
+    <None Include="OpenGL.dll" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="LICENSE.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\Base.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\Ground.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\Peaks.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\Rock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

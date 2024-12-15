@@ -16,8 +16,9 @@ Display::Display(std::string display_name, int width, int height)
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	SDL_GL_SetSwapInterval(1);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
 
 	//create the SDL window*.
 	m_window = SDL_CreateWindow(
@@ -37,7 +38,9 @@ Display::Display(std::string display_name, int width, int height)
 		util::fatal_error("SDL_GL_CreateContext: %s", SDL_GetError());
 	}
 
-	gladLoadGLLoader(SDL_GL_GetProcAddress);
+	if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
+		util::fatal_error("Failed to initialize Glad");
+	}
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -45,7 +48,7 @@ Display::Display(std::string display_name, int width, int height)
 	ImGui::StyleColorsClassic();
 
 	ImGui_ImplSDL2_InitForOpenGL(m_window, m_context);
-	ImGui_ImplOpenGL3_Init("#version 400");
+	ImGui_ImplOpenGL3_Init("#version 330 core");
 }
 
 SDL_Window* Display::GetWindow() const
